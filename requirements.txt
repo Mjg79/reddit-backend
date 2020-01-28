@@ -1,0 +1,4 @@
+django==2.1.7  # https://www.djangoproject.com/
+django-versatileimagefield==1.10  # https://github.com/respondcreate/django-versatileimagefield
+django-jalali-date==0.2.10
+djangorestframework==3.9.2  # https://github.com/encode/django-rest-framework
