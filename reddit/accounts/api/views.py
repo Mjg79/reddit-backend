@@ -51,14 +51,14 @@ class LoginView(generics.CreateAPIView):
             user, created = Authentication().authenticate_credentials(userid=username, password=password)
             #  token will be needed
         user_logged_in.send(sender=user.__class__, request=self.request, user=user)
-        return 'sss'
+        return user
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        full_token = self.authenticate_user(serializer.data['username'], serializer.data['password'])
+        user = self.authenticate_user(serializer.data['username'], serializer.data['password'])
         return Response(
-            data={'token': full_token},
+            data=UserSerializer(instance=user).data,
             status=status.HTTP_200_OK,
             headers=self.get_success_headers(serializer.data)
         )
