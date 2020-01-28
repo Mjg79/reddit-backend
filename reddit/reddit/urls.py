@@ -18,7 +18,7 @@ from django.urls import path, include
 
 extra = [
     path('accounts/', include('accounts.api.urls', namespace='accounts')),
-    # path('socials/', include('socials.api.urls', namespace='socials'))
+    path('socials/', include('socials.api.urls', namespace='socials'))
 ]
 
 urlpatterns = [
