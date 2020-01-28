@@ -7,7 +7,9 @@ app_name = 'accounts'
 router = routers.DefaultRouter()
 router.include_root_view = False
 
+router.register('register', UserView, basename='user_register')
+
 urlpatterns = router.urls + [
-    path('register/', UserView, name='register'),
+    # path('register/', UserView, name='register'),
     path('login/', LoginView.as_view(), name='login'),
 ]

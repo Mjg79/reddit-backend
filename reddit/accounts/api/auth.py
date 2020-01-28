@@ -36,4 +36,4 @@ class Authentication(BasicAuthentication):
         if not user.is_active:
             raise exceptions.AuthenticationFailed(_('This user is deactivated!'))
 
-        return user, None
+        return user, is_new

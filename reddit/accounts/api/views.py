@@ -13,30 +13,30 @@ from django.db import transaction
 from accounts.api.serializers import LoginSerializer, UserSerializer
 
 
-class UserView(generics.CreateAPIView):
+class UserView(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     serializer_class = UserSerializer
     queryset = User.objects.none()
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        # validate user input
-        serializer.is_valid(raise_exception=True)
-
-        user = User.objects.update_or_create(
-            phone=serializer.validated_data['phone'],
-            defaults=dict(username=serializer.validated_data['username'])
-        )[0]
-        user.set_password(serializer.validated_data['password'])
-        user.first_name = strip_tags(serializer.validated_data.get('first_name', ''))
-        user.last_name = strip_tags(serializer.validated_data.get('last_name', ''))
-        user.save()
-
-        return Response(
-            data=serializer.validated_data,
-            status=status.HTTP_201_CREATED,
-            headers=self.get_success_headers(serializer.validated_data)
-        )
+    # def create(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(data=request.data)
+    #     # validate user input
+    #     serializer.is_valid(raise_exception=True)
+    #
+    #     user = User.objects.update_or_create(
+    #         phone=serializer.validated_data['phone'],
+    #         defaults=dict(username=serializer.validated_data['username'])
+    #     )[0]
+    #     user.set_password(serializer.validated_data['password'])
+    #     user.first_name = strip_tags(serializer.validated_data.get('first_name', ''))
+    #     user.last_name = strip_tags(serializer.validated_data.get('last_name', ''))
+    #     user.save()
+    #
+    #     return Response(
+    #         data=serializer.validated_data,
+    #         status=status.HTTP_201_CREATED,
+    #         headers=self.get_success_headers(serializer.validated_data)
+    #     )
 
 
 class LoginView(generics.CreateAPIView):
