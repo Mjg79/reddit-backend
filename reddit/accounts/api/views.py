@@ -23,13 +23,13 @@ class UserView(generics.CreateAPIView):
         # validate user input
         serializer.is_valid(raise_exception=True)
 
-        user, _ = User.objects.update_or_create(
+        user = User.objects.update_or_create(
             phone=serializer.validated_data['phone'],
             defaults=dict(username=serializer.validated_data['username'])
         )[0]
+        user.set_password(serializer.validated_data['password'])
         user.first_name = strip_tags(serializer.validated_data.get('first_name', ''))
         user.last_name = strip_tags(serializer.validated_data.get('last_name', ''))
-        user.set_unusable_password()
         user.save()
 
         return Response(
