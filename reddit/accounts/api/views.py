@@ -48,7 +48,7 @@ class LoginView(generics.CreateAPIView):
     def authenticate_user(self, username, password):
 
         with transaction.atomic():
-            user, _ = Authentication().authenticate_credentials(userid=username, password=password)
+            user, created = Authentication().authenticate_credentials(userid=username, password=password)
             #  token will be needed
         user_logged_in.send(sender=user.__class__, request=self.request, user=user)
         return 'sss'

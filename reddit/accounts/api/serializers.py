@@ -3,7 +3,7 @@ from accounts.models import User
 from django.contrib.auth.validators import ASCIIUsernameValidator
 
 
-class LoginSerializer(serializers.ModelSerializer):
+class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(
         validators=[ASCIIUsernameValidator()]
     )

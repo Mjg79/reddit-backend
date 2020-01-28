@@ -1,6 +1,7 @@
 from rest_framework import exceptions
 from rest_framework.authentication import BasicAuthentication
 from accounts.models import User
+from django.utils.translation import ugettext_lazy as _
 
 
 class Authentication(BasicAuthentication):
