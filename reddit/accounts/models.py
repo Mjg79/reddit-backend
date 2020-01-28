@@ -1,0 +1,91 @@
+import os
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+from reddit.accounts.utils import generate_random_username
+from django.contrib.auth.validators import ASCIIUsernameValidator
+from django.utils.translation import ugettext_lazy as _
+from django.core.validators import RegexValidator
+from reddit.regions.models import City
+from reddit.regions.abstractModels import TimestampedModel
+from djchoices import ChoiceItem, DjangoChoices
+from versatileimagefield.fields import VersatileImageField
+
+
+__all__ = [
+    'User',
+    'GenderChoices',
+    'Profile'
+]
+
+def personal_profile_path(instance):
+    return os.path.join(instance.user.username)
+
+
+class User(AbstractUser):
+    username = models.CharField(
+        verbose_name=_('username'),
+        max_length=150,
+        unique=True,
+        default=generate_random_username,
+        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+        validators=[ASCIIUsernameValidator()],
+        error_messages={
+            'unique': _("A user with that username already exists."),
+        },
+    )
+    email = models.EmailField(_('email address'), db_index=True, blank=True)
+    phone = models.CharField(
+        verbose_name=_('phone'),
+        max_length=15,
+        validators=[
+            RegexValidator(regex=r'^\d+$', message=_('Phone number should only be comprised of digits.')),
+        ],
+        db_index=True,
+        blank=True,
+    )
+    city = models.ForeignKey(
+        to=City,
+        verbose_name=_('city'),
+        related_name='users',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+
+
+class GenderChoices(DjangoChoices):
+    MALE = ChoiceItem('MALE', _('MALE'))
+    FEMALE = ChoiceItem('FEMALE', _('FEMALE'))
+
+
+class Profile(TimestampedModel):
+    user = models.OneToOneField(
+        to='accounts.User',
+        verbose_name=_('user'),
+        related_name='personal_profile',
+        on_delete=models.CASCADE
+    )
+    gender = models.CharField(
+        verbose_name=_('gender'),
+        max_length=32,
+        choices=GenderChoices.choices,
+        validators=[GenderChoices.validator],
+        blank=True,
+        help_text=_('Designates gender of the user in profile'),
+    )
+    birth_date = models.DateField(
+        verbose_name=_('birth date'),
+        blank=True,
+        null=True
+    )
+    picture = VersatileImageField(
+        verbose_name=_('picture'),
+        blank=True,
+        upload_to=personal_profile_path,
+        max_length=255,
+    )
+
+    class Meta:
+        verbose_name = _('profile')
+        verbose_name_plural = _('profiles')
+
