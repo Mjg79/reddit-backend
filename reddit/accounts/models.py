@@ -85,6 +85,12 @@ class Profile(TimestampedModel):
         max_length=255,
     )
 
+    followed_by = models.ManyToManyField(
+        to=User,
+        verbose_name=_('followers'),
+        related_name='followings_user',
+    )
+
     class Meta:
         verbose_name = _('profile')
         verbose_name_plural = _('profiles')
