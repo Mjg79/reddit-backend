@@ -16,11 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+extra = [
+    path('accounts/', include('accounts.api.urls', namespace='accounts')),
+    # path('socials/', include('socials.api.urls', namespace='socials'))
+]
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(([
-        path('accounts/', include('accounts.api.urls', namespace='accounts')),
-        path('socials/', include('socials.api.urls', namespace='socials')),
-    ], 'apps'), namespace='api')
-         )
+    path('api/', include((extra, 'reddit'), namespace='api'))
 ]

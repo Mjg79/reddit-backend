@@ -1,4 +1,4 @@
-from reddit.regions.abstractModels import TimestampedModel, ActivatedModel
+from regions.abstractModels import TimestampedModel, ActivatedModel
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 

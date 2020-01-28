@@ -1,6 +1,6 @@
 from rest_framework import exceptions
 from rest_framework.authentication import BasicAuthentication
-from reddit.accounts.models import User
+from accounts.models import User
 
 
 class Authentication(BasicAuthentication):

@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework import routers
-from reddit.accounts.api.views import LoginView, UserView
+from accounts.api.views import LoginView, UserView
 
 app_name = 'accounts'
 

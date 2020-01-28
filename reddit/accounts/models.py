@@ -1,21 +1,21 @@
 import os
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from reddit.accounts.utils import generate_random_username
+from .utils import generate_random_username
 from django.contrib.auth.validators import ASCIIUsernameValidator
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import RegexValidator
-from reddit.regions.models import City
-from reddit.regions.abstractModels import TimestampedModel
+from regions.models import City
+from regions.abstractModels import TimestampedModel
 from djchoices import ChoiceItem, DjangoChoices
 from versatileimagefield.fields import VersatileImageField
-
 
 __all__ = [
     'User',
     'GenderChoices',
     'Profile'
 ]
+
 
 def personal_profile_path(instance):
     return os.path.join(instance.user.username)
