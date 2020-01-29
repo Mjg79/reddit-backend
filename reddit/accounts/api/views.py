@@ -17,12 +17,8 @@ class UserView(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     serializer_class = UserSerializer
 
-    def retrieve(self, request, *args, **kwargs):
-        return Response(
-            data=UserSerializer(instance=self.request.user).data,
-            status=status.HTTP_200_OK
-        )
-
+    def get_queryset(self):
+        return [self.request.user]
     # def create(self, request, *args, **kwargs):
     #     serializer = self.get_serializer(data=request.data)
     #     # validate user input
