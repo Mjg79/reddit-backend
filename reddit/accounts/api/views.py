@@ -5,12 +5,12 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
-from accounts.api.auth import Authentication
+from .auth import Authentication
 from django.utils.html import strip_tags
 from django.contrib.auth import user_logged_in, user_logged_out
 from accounts.models import User
 from django.db import transaction
-from accounts.api.serializers import LoginSerializer, UserSerializer
+from .serializers import LoginSerializer, UserSerializer
 
 
 class UserView(viewsets.ModelViewSet):
@@ -19,25 +19,17 @@ class UserView(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return [self.request.user]
-    # def create(self, request, *args, **kwargs):
-    #     serializer = self.get_serializer(data=request.data)
-    #     # validate user input
-    #     serializer.is_valid(raise_exception=True)
-    #
-    #     user = User.objects.update_or_create(
-    #         phone=serializer.validated_data['phone'],
-    #         defaults=dict(username=serializer.validated_data['username'])
-    #     )[0]
-    #     user.set_password(serializer.validated_data['password'])
-    #     user.first_name = strip_tags(serializer.validated_data.get('first_name', ''))
-    #     user.last_name = strip_tags(serializer.validated_data.get('last_name', ''))
-    #     user.save()
-    #
-    #     return Response(
-    #         data=serializer.validated_data,
-    #         status=status.HTTP_201_CREATED,
-    #         headers=self.get_success_headers(serializer.validated_data)
-    #     )
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            User.objects.create_user(
+                serializer.init_data['username'],
+                serializer.init_data['password']
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer._errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LoginView(generics.CreateAPIView):

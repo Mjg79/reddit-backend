@@ -8,5 +8,9 @@ router = routers.DefaultRouter()
 router.include_root_view = False
 
 urlpatterns = router.urls + [
-    path('dashboard/', DashboardView.as_view(), name='login'),
+    path('dashboard/', DashboardView.as_view(), name='dashboard'),
+    # path('posts/', 'ez', name='posts'),
+    # path('news/', 'ez', name='news'),
+    # path('activities/', 'ez', name='activities'),
+    # path('hots/', 'ez', name='hots')
 ]
