@@ -3,3 +3,4 @@ django-versatileimagefield==1.10  # https://github.com/respondcreate/django-vers
 django-jalali-date==0.2.10
 djangorestframework==3.9.2  # https://github.com/encode/django-rest-framework
 django-choices==1.6.2  # https://github.com/bigjason/django-choices
+django-cors-headers==2.5.2  # https://github.com/ottoyiu/django-cors-headers
