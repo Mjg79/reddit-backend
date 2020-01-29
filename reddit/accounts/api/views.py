@@ -24,8 +24,8 @@ class UserView(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             User.objects.create_user(
-                serializer.init_data['username'],
-                serializer.init_data['password']
+                serializer.data['username'],
+                serializer.data['password']
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
