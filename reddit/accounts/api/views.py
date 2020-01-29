@@ -18,10 +18,7 @@ class UserView(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
     def get_queryset(self):
-        return Response(
-            data=UserSerializer(instance=self.request.user).data,
-            status=status.HTTP_200_OK
-        )
+        return self.request.user
 
     # def create(self, request, *args, **kwargs):
     #     serializer = self.get_serializer(data=request.data)
