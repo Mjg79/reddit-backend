@@ -1,8 +1,25 @@
+import os
 from django.db import models
 from regions.abstractModels import TimestampedModel, ActivatedModel
 from djchoices import DjangoChoices, ChoiceItem
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
+from versatileimagefield.fields import VersatileImageField
+
+
+__all__=[
+    'Channel',
+    'Post',
+    'Comment',
+    'FeedbackChoices',
+    'Like',
+    'NotifSituations',
+    'Notification'
+]
+
+
+def channel_avatar_path(instance):
+    os.path.join(instance.name)
 
 
 class Channel(TimestampedModel, ActivatedModel):
@@ -29,7 +46,13 @@ class Channel(TimestampedModel, ActivatedModel):
     rules = models.TextField(
         blank=True,
         help_text='rules of this channel'
-    ),
+    )
+    avatar = VersatileImageField(
+        verbose_name='avatar',
+        blank=True,
+        upload_to=channel_avatar_path,
+        max_length=255,
+    )
 
 
 class Post(TimestampedModel, ActivatedModel):
