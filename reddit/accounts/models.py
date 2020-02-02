@@ -51,6 +51,7 @@ class User(AbstractUser):
         null=True,
         blank=True,
     )
+    USERNAME_FIELD = 'username'
 
 
 class GenderChoices(DjangoChoices):
