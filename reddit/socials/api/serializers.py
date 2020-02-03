@@ -15,10 +15,13 @@ class CommentSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     author_name = serializers.CharField(source='author.username')
     channel_name = serializers.CharField(source='channel.name')
-    comments = CommentSerializer()
+    comments = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
         fields = ['id', 'text', 'author_name', 'channel_name', 'comments']
         read_only_fields = fields
+
+    def get_comments(self, obj: Post):
+        return CommentSerializer(instance=obj.comments, many=True).data
 
