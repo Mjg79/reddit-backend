@@ -31,16 +31,16 @@ class PostView(viewsets.ModelViewSet):
     # def get_channels(self):
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer()
         text = request.data.get('caption', '')
         channel_id = request.data.get('channel_id', '')
         post = Post.objects.create(text=text, channel=Channel.objects.get(id=channel_id), author=request.user)
-        return Response(serializer(instance=post).data, status=status.HTTP_201_CREATED)
+        serializer = self.get_serializer(instance=post)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def retrieve(self, request, *args, **kwargs):
-        serializer = self.get_serializer()
         id = kwargs.get('post_id', None)
         if id:
-            return Response(serializer(instance=Post.objects.get(id=id)).data, status.HTTP_200_OK)
+            serializer = self.get_serializer(instance=Post.objects.get(id=id))
+            return Response(serializer.data, status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
