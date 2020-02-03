@@ -126,6 +126,7 @@ class Like(TimestampedModel, ActivatedModel):
         max_length=32,
         choices=FeedbackChoices.choices,
         validators=[FeedbackChoices.validator],
+        null=True
     )
 
 
