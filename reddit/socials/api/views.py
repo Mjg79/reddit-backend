@@ -42,4 +42,4 @@ class PostView(viewsets.ModelViewSet):
         if id:
             return Post.objects.get(id=id)
         else:
-            return None
+            raise exceptions.NotFound('return id')
