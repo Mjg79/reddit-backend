@@ -24,13 +24,28 @@ class UserView(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = User.objects.create(
-                username=serializer.data['username']
+                username=serializer.data['username'],
             )
             user.set_password(serializer.data['password'])
             user.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(dict(), status=status.HTTP_201_CREATED)
         else:
             return Response(serializer._errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserUpdateView(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, *args, **kwargs):
+        data = request.data
+        user = request.user
+        if not data.get('email', None):
+            return exceptions.NotAcceptable('add email')
+        user.first_name = data.get('first_name', '')
+        user.last_name = data.get('last_name', '')
+        user.email = data.get('email', '')
+        user.phone = data.get('phone', '')
+        user.save()
 
 
 class LoginView(generics.CreateAPIView):
