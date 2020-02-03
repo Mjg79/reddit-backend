@@ -42,8 +42,7 @@ class ChannelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Channel
-        fields = '__all__'
-        fields += ['authors', 'admin']
+        fields = ['name', 'authors', 'admin', 'rules', 'avatar']
         read_only_fields = fields
 
     def get_authors(self, obj: Channel):
