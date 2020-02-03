@@ -8,9 +8,10 @@ from rest_framework.response import Response
 from .auth import Authentication
 from django.utils.html import strip_tags
 from django.contrib.auth import user_logged_in, user_logged_out
-from accounts.models import User
+from accounts.models import User, Profile
 from django.db import transaction
-from .serializers import LoginSerializer, UserSerializer, AuthorSerializer
+from .serializers import LoginSerializer, UserSerializer, AuthorSerializer, ProfileSerializer
+from socials.api.serializers import ChannelSerializer
 
 
 class UserView(viewsets.ModelViewSet):
@@ -78,13 +79,44 @@ class ProfileView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
 
     def retrieve(self, request, *args, **kwargs):
-        return Response({})
+        pk = request.query_params.get('id', None)
+        if not pk:
+            raise exceptions.NotFound
+        return Response(
+            data=ProfileSerializer(instance=Profile.objects.get(user__id=pk)).data, status=status.HTTP_200_OK
+        )
 
 
-class FollowersView(generics.ListAPIView):
+class FollowView(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = AuthorSerializer
 
-    def list(self, request, *args, **kwargs):
-        return Response({})
+    @action(detail=True, methods=['get'])
+    def followers(self, request, pk):
+        user = User.objects.get(id=pk)
+        return Response(
+            data=AuthorSerializer(
+                instance=user.personal_profile.followed_by.all(), many=True, context={'user': user}
+            ).data,
+            status=status.HTTP_200_OK
+        )
+
+    @action(detail=True, methods=['get'])
+    def followings(self, request, pk):
+        user = User.objects.get(id=pk)
+        return Response(
+            data={
+                'people': AuthorSerializer(
+                    instance=user.followings_user.all().values_list('user', flat=True).distinct()
+                ),
+                'channels': ChannelSerializer(instance=user.followings_channel.all(), many=True).data,
+            }
+        )
+
+
+
+
+
+
+
 

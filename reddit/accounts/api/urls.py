@@ -12,5 +12,6 @@ router.register('register', UserView, basename='user_register')
 urlpatterns = router.urls + [
     path('login/', LoginView.as_view(), name='login'),
     path('update/', UserUpdateView.as_view(), name='update'),
-    path('followers/', FollowersView.as_view(), name='followers'),
+    path('follow/', FollowView.as_view(), name='followers'),
+    path('profile/', ProfileView.as_view(), name='profile')
 ]
