@@ -12,7 +12,7 @@ router.register('channel', ChannelView, basename='channel')
 
 urlpatterns = router.urls + [
     path('dashboard/', DashboardView.as_view(), name='dashboard'),
-    path('notifs/', NotifView.as_view(), name='notifications')
+    path('notifs/', NotifView.as_view(), name='notifications'),
     # path('news/', 'ez', name='news'),
     # path('activities/', 'ez', name='activities'),
     # path('hots/', 'ez', name='hots')

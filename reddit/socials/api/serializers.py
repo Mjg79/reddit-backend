@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from socials.models import *
 from jalali_date import datetime2jalali
-from accounts.api.serializers import AuthorSerializer, UserSerializer
+from accounts.api.serializers import UserSerializer
 from django.contrib.contenttypes.models import ContentType
 
 
@@ -47,6 +47,7 @@ class ChannelSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_authors(self, obj: Channel):
+        from accounts.api.serializers import AuthorSerializer
         return AuthorSerializer(instance=obj.authors, many=True).data
 
     def get_admin(self, obj: Channel):
