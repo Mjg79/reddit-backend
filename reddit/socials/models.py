@@ -159,5 +159,5 @@ class Notification(TimestampedModel):
         verbose_name='audience type',
         on_delete=models.CASCADE,
     )
-    audience_id = models.UUIDField('audience id')
+    audience_id = models.IntegerField(verbose_name='audience id')
     audience_object = GenericForeignKey('audience_type', 'audience_id')
