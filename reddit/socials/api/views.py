@@ -40,6 +40,6 @@ class PostView(viewsets.ModelViewSet):
     def get_queryset(self):
         id = self.request.query_params.get('post_id', None)
         if id:
-            return Post.objects.get(id=id)
+            return Post.objects.filter(id=id)
         else:
             raise exceptions.NotFound('return id')
