@@ -10,7 +10,7 @@ from django.utils.html import strip_tags
 from django.contrib.auth import user_logged_in, user_logged_out
 from accounts.models import User
 from django.db import transaction
-from .serializers import LoginSerializer, UserSerializer
+from .serializers import LoginSerializer, UserSerializer, AuthorSerializer
 
 
 class UserView(viewsets.ModelViewSet):
@@ -72,3 +72,19 @@ class LoginView(generics.CreateAPIView):
             status=status.HTTP_200_OK,
             headers=self.get_success_headers(serializer.data)
         )
+
+
+class ProfileView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response({})
+
+
+class FollowersView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = AuthorSerializer
+
+    def list(self, request, *args, **kwargs):
+        return Response({})
+

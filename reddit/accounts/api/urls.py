@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework import routers
-from .views import LoginView, UserView, UserUpdateView
+from .views import *
 
 app_name = 'accounts'
 
@@ -12,4 +12,5 @@ router.register('register', UserView, basename='user_register')
 urlpatterns = router.urls + [
     path('login/', LoginView.as_view(), name='login'),
     path('update/', UserUpdateView.as_view(), name='update'),
+    path('followers/', FollowersView.as_view(), name='followers'),
 ]
