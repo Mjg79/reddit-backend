@@ -6,11 +6,11 @@ from jalali_date import datetime2jalali
 class CommentSerializer(serializers.ModelSerializer):
     author_name = serializers.CharField(source='author.username')
     answering_id = serializers.CharField(source='answering.id')
-    created_time = serializers.SerializerMethodField()
+    create_time = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
-        fields = ['id', 'text', 'author_name', 'answering_id']
+        fields = ['id', 'text', 'author_name', 'answering_id', 'create_time']
         read_only_fields = fields
 
     def get_create_time(self, obj: Comment):
@@ -24,7 +24,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['id', 'text', 'author_name', 'channel_id', 'comments', 'created_time']
+        fields = ['id', 'text', 'author_name', 'channel_id', 'comments', 'create_time']
         read_only_fields = fields
 
     def get_comments(self, obj: Post):
