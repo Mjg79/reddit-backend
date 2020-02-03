@@ -100,8 +100,8 @@ class Comment(TimestampedModel, ActivatedModel):
 
 
 class FeedbackChoices(DjangoChoices):
-    MALE = ChoiceItem('MALE', 'MALE')
-    FEMALE = ChoiceItem('FEMALE', 'FEMALE')
+    POSITIVE = ChoiceItem('POSITIVE', 'POSITIVE')
+    NEGATIVE = ChoiceItem('NEGATIVE', 'NEGATIVE')
 
 
 class Like(TimestampedModel, ActivatedModel):
@@ -126,7 +126,6 @@ class Like(TimestampedModel, ActivatedModel):
         max_length=32,
         choices=FeedbackChoices.choices,
         validators=[FeedbackChoices.validator],
-        blank=True,
     )
 
 
