@@ -29,6 +29,7 @@ class UserView(viewsets.ModelViewSet):
             )
             user.set_password(request.data['password'])
             user.save()
+            Profile.objects.create(user=user)
             return Response(dict(), status=status.HTTP_201_CREATED)
         else:
             return Response(serializer._errors, status=status.HTTP_400_BAD_REQUEST)
