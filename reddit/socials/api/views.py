@@ -38,7 +38,7 @@ class PostView(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get_queryset(self):
-        id = self.query_params.get('post_id', None)
+        id = self.request.query_params.get('post_id', None)
         if id:
             return Post.objects.get(id=id)
         else:
