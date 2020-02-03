@@ -3,6 +3,7 @@ from rest_framework.authentication import get_authorization_header
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from .permissions import IsAuthor
 from rest_framework.request import Request
 from rest_framework.response import Response
 from accounts.api.auth import Authentication
@@ -24,7 +25,7 @@ class DashboardView(generics.ListAPIView):
 
 
 class PostView(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAuthor]
     serializer_class = PostSerializer
 
     # @action()
@@ -33,6 +34,9 @@ class PostView(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         text = request.data.get('caption', '')
         channel_id = request.data.get('channel_id', '')
+        channel = Channel.objects.get(id=channel_id)
+        if channel_id and request.user in channel.authors.all():
+            raise exceptions.PermissionDenied
         post = Post.objects.create(text=text, channel=Channel.objects.get(id=channel_id), author=request.user)
         serializer = self.get_serializer(instance=post)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -43,3 +47,23 @@ class PostView(viewsets.ModelViewSet):
             return Post.objects.filter(id=id)
         else:
             raise exceptions.NotFound('return id')
+
+
+class ChannelView(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ChannelSerializer
+
+    def create(self, request, *args, **kwargs):
+        name = request.data.get('name', '')
+        rules = request.data.get('rules', '')
+        avatar = request.data.get('avatar', '')
+        ch = Channel.objects.create(name=name, admin=request.user, rules=rules, avatar=avatar)
+        return Response(data={'channel_id': ch.id}, status=status.HTTP_201_CREATED)
+
+    def get_queryset(self):
+        pk = self.request.query_params.get('id', None)
+        if pk:
+            return Channel.objects.filter(id=pk)
+        return []
+
+

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from socials.models import *
 from jalali_date import datetime2jalali
+from accounts.api.serializers import AuthorSerializer, UserSerializer
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -15,6 +16,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def get_create_time(self, obj: Comment):
         return datetime2jalali(obj.created).strftime('%Y/%m/%d %H:%M') if obj.created else ''
+
 
 class PostSerializer(serializers.ModelSerializer):
     author_name = serializers.CharField(source='author.username')
@@ -33,4 +35,20 @@ class PostSerializer(serializers.ModelSerializer):
     def get_create_time(self, obj: Post):
         return datetime2jalali(obj.created).strftime('%Y/%m/%d %H:%M') if obj.created else ''
 
+
+class ChannelSerializer(serializers.ModelSerializer):
+    authors = serializers.SerializerMethodField(required=False)
+    admin = serializers.SerializerMethodField(required=False)
+
+    class Meta:
+        model = Channel
+        fields = '__all__'
+        fields += ['authors', 'admin']
+        read_only_fields = fields
+
+    def get_authors(self, obj: Channel):
+        return AuthorSerializer(instance=obj.authors, many=True).data
+
+    def get_admin(self, obj: Channel):
+        return UserSerializer(instance=obj.admin)
 
