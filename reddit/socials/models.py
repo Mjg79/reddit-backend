@@ -19,7 +19,11 @@ __all__=[
 
 
 def channel_avatar_path(instance):
-    os.path.join(instance.name)
+    return os.path.join(instance.name)
+
+
+def post_image_path(instance):
+    return os.path.join(instance.author.username + 'Post' + instance.author.posts.count())
 
 
 class Channel(TimestampedModel, ActivatedModel):
@@ -56,9 +60,6 @@ class Channel(TimestampedModel, ActivatedModel):
 
 
 class Post(TimestampedModel, ActivatedModel):
-    title = models.CharField(
-        max_length=100,
-    )
     text = models.TextField()
     author = models.ForeignKey(
         to='accounts.User',
@@ -68,7 +69,13 @@ class Post(TimestampedModel, ActivatedModel):
     channel = models.ForeignKey(
         to=Channel,
         on_delete=models.CASCADE,
-        related_name='channels'
+        related_name='posts'
+    )
+    image = VersatileImageField(
+        verbose_name='image',
+        blank=True,
+        upload_to=post_image_path,
+        max_length=255,
     )
 
 
