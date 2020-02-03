@@ -109,7 +109,7 @@ class FollowView(viewsets.GenericViewSet):
             data={
                 'people': AuthorSerializer(
                     instance=user.followings_user.all().values_list('user', flat=True).distinct()
-                ),
+                ).data,
                 'channels': ChannelSerializer(instance=user.followings_channel.all(), many=True).data,
             }
         )
