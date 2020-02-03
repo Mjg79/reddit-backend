@@ -37,10 +37,9 @@ class PostView(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance=post)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def retrieve(self, request, *args, **kwargs):
-        id = kwargs.get('post_id', None)
+    def get_queryset(self):
+        id = self.query_params.get('post_id', None)
         if id:
-            serializer = self.get_serializer(instance=Post.objects.get(id=id))
-            return Response(serializer.data, status.HTTP_200_OK)
+            return Post.objects.get(id=id)
         else:
-            return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+            return None
