@@ -152,6 +152,7 @@ class Notification(TimestampedModel):
         to='accounts.User',
         on_delete=models.CASCADE,
         related_name='notifs_sent',
+        null=True
     )
     audience_type = models.ForeignKey(
         to=ContentType,
