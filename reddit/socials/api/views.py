@@ -56,7 +56,7 @@ class PostView(viewsets.ModelViewSet):
         )
         channels = []
         for c in chs:
-            channels.append({'name': c.name, 'id': c.id})
+            channels.append({'name': c.name, 'id': c.id, 'avatar': c.avatar})
         return Response(data={'channels': channels}, status=status.HTTP_200_OK)
 
 
