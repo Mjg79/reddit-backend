@@ -73,6 +73,6 @@ class NotifView(generics.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         lst = request.user.notifs.all()
-        return self.get_serializer(instance=lst, many=True).data
+        return Response(data=self.get_serializer(instance=lst, many=True).data, status=status.HTTP_200_OK)
 
 
