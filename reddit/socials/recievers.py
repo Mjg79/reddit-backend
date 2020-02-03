@@ -11,14 +11,14 @@ def notif_after_like(sender, instance: Like, created: bool, **kwargs):
         cid = instance.post.id
         Notification.objects.create(
             for_user=instance.post.author, situation=NotifSituations.LIKE_ON_POST,
-            audience_id=cid, audience_type=ctype
+            audience_id=cid, audience_type=ctype, who=instance.feedbacker
         )
     else:
         ctype = ContentType.objects.get(model='comment')
         cid = instance.comment.id
         Notification.objects.create(
             for_user=instance.comment.author, situation=NotifSituations.LIKE_ON_COMMENT,
-            audience_id=cid, audience_type=ctype
+            audience_id=cid, audience_type=ctype, who=instance.feedbacker
         )
 
 
@@ -29,12 +29,12 @@ def notif_after_comment(sender, instance: Comment, created: bool, **kwargs):
         cid = instance.answering.id
         Notification.objects.create(
             for_user=instance.answering.author, situation=NotifSituations.COMMENT_ON_COMMENT,
-            audience_id=cid, audience_type=ctype
+            audience_id=cid, audience_type=ctype, who=instance.author
         )
     else:
         ctype = ContentType.objects.get(model='post')
         cid = instance.post.id
         Notification.objects.create(
             for_user=instance.post.author, situation=NotifSituations.COMMENT_ON_POST,
-            audience_id=cid, audience_type=ctype
+            audience_id=cid, audience_type=ctype, who=instance.author
         )
