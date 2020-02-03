@@ -26,7 +26,7 @@ class UserView(viewsets.ModelViewSet):
             user = User.objects.create(
                 username=serializer.data['username'],
             )
-            user.set_password(serializer.data['password'])
+            user.set_password(request.data['password'])
             user.save()
             return Response(dict(), status=status.HTTP_201_CREATED)
         else:

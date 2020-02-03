@@ -18,4 +18,5 @@ class DashboardView(generics.ListAPIView):
     authentication_classes = [Authentication]
 
     def get(self, request, *args, **kwargs):
+
         return Response(data={'ez':'ez'}, status=status.HTTP_200_OK)
