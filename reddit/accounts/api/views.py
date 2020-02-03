@@ -40,7 +40,7 @@ class UserUpdateView(generics.UpdateAPIView):
         data = request.data
         user = request.user
         if not data.get('email', None):
-            return exceptions.NotAcceptable('add email')
+            return Response(status=status.HTTP_403_FORBIDDEN)
         user.first_name = data.get('first_name', '')
         user.last_name = data.get('last_name', '')
         user.email = data.get('email', '')
