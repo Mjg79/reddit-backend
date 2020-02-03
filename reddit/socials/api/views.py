@@ -48,16 +48,16 @@ class PostView(viewsets.ModelViewSet):
         else:
             raise exceptions.NotFound('return id')
 
-    @action(detail=True, methods=['get'])
-    def available_channels(self, request, pk):
-        user = User.objects.get(id=pk)
+    @action(detail=False, methods=['get'])
+    def available_channels(self, request):
+        user = request.user
         chs = Channel.objects.filter(
             id__in=list(user.channels_author.all().values_list('id', flat=True)) + list(user.channels_admin.all().values_list('id', flat=True))
         )
         channels = []
         for c in chs:
             channels.append({'name': c.name, 'id': c.id})
-        return Response(data={'channels':channels}, status=status.HTTP_200_OK)
+        return Response(data={'channels': channels}, status=status.HTTP_200_OK)
 
 
 class ChannelView(viewsets.ModelViewSet):
