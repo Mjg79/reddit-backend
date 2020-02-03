@@ -46,6 +46,7 @@ class UserUpdateView(generics.UpdateAPIView):
         user.email = data.get('email', '')
         user.phone = data.get('phone', '')
         user.save()
+        return Response(UserSerializer(instance=user).data, status=status.HTTP_200_OK)
 
 
 class LoginView(generics.CreateAPIView):
