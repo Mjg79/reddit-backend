@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework import routers
-from .views import DashboardView, PostView, ChannelView
+from .views import *
 
 app_name = 'socials'
 
@@ -12,6 +12,7 @@ router.register('channel', ChannelView, basename='channel')
 
 urlpatterns = router.urls + [
     path('dashboard/', DashboardView.as_view(), name='dashboard'),
+    path('notifs/', NotifView, name='notifications')
     # path('news/', 'ez', name='news'),
     # path('activities/', 'ez', name='activities'),
     # path('hots/', 'ez', name='hots')

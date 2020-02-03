@@ -148,6 +148,11 @@ class Notification(TimestampedModel):
         choices=NotifSituations.choices,
         validators=[NotifSituations.validator],
     )
+    who = models.ForeignKey(
+        to='accounts.User',
+        on_delete=models.CASCADE,
+        related_name='notifs_sent',
+    )
     audience_type = models.ForeignKey(
         to=ContentType,
         verbose_name='audience type',

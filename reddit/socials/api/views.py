@@ -67,3 +67,12 @@ class ChannelView(viewsets.ModelViewSet):
         return []
 
 
+class NotifView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = NotificationSerializer
+
+    def list(self, request, *args, **kwargs):
+        lst = request.user.notifs.all()
+        return self.get_serializer(instance=lst, many=True).data
+
+

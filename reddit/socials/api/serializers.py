@@ -2,6 +2,7 @@ from rest_framework import serializers
 from socials.models import *
 from jalali_date import datetime2jalali
 from accounts.api.serializers import AuthorSerializer, UserSerializer
+from django.contrib.contenttypes.models import ContentType
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -50,4 +51,27 @@ class ChannelSerializer(serializers.ModelSerializer):
 
     def get_admin(self, obj: Channel):
         return UserSerializer(instance=obj.admin).data
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    For = serializers.SerializerMethodField()
+    who_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Notification
+        fields = ['situation', 'audience_type', 'For', 'who_name']
+        read_only_fields = fields
+
+    def get_For(self, obj: Notification):
+        if obj.audience_type == ContentType.objects.get(model='post'):
+            data = {'mode':'post'}
+        elif obj.audience_type == ContentType.objects.get(model='comment'):
+            data = {'model':'comment'}
+        else:
+            data = {'model':'follow'}
+        data['id'] = obj.audience_id
+        return data
+
+    def get_who_name(self, obj: Notification):
+        return obj.who.first_name + ' ' + obj.who.last_name
 
