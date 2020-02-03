@@ -49,5 +49,5 @@ class ChannelSerializer(serializers.ModelSerializer):
         return AuthorSerializer(instance=obj.authors, many=True).data
 
     def get_admin(self, obj: Channel):
-        return UserSerializer(instance=obj.admin)
+        return UserSerializer(instance=obj.admin).data
 
