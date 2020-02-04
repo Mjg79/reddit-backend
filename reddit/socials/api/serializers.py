@@ -54,10 +54,12 @@ class PostSerializer(serializers.ModelSerializer):
 class ChannelSerializer(serializers.ModelSerializer):
     authors = serializers.SerializerMethodField(required=False)
     admin = serializers.SerializerMethodField(required=False)
+    no_followers = serializers.SerializerMethodField(required=False)
+    no_posts = serializers.SerializerMethodField(required=False)
 
     class Meta:
         model = Channel
-        fields = ['name', 'authors', 'admin', 'rules', 'avatar']
+        fields = ['id', 'name', 'authors', 'admin', 'rules', 'avatar', 'no_followers', 'no_posts']
         read_only_fields = fields
 
     def get_authors(self, obj: Channel):
@@ -67,6 +69,12 @@ class ChannelSerializer(serializers.ModelSerializer):
     def get_admin(self, obj: Channel):
         from accounts.api.serializers import UserSerializer
         return UserSerializer(instance=obj.admin).data
+
+    def get_no_followers(self, obj: Channel):
+        return obj.followed_by.count()
+
+    def get_no_followers(self, obj: Channel):
+        return Post.objects.filter(channel=obj).count()
 
 
 class NotificationSerializer(serializers.ModelSerializer):

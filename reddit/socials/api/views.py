@@ -85,8 +85,6 @@ class PostView(viewsets.ModelViewSet):
         return Response({'status': like.feedback}, status=status.HTTP_200_OK)
 
 
-
-
 class ChannelView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = ChannelSerializer

@@ -8,4 +8,4 @@ class IsAuthor(permissions.BasePermission):
         if not channel_id:
             return True
         channel = Channel.objects.get(id=channel_id)
-        return request.user in channel.authors.all()
+        return request.user in channel.authors.all() or request.user == channel.admin
