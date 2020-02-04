@@ -14,7 +14,7 @@ router.register('comment', CommentView, basename='comment')
 urlpatterns = router.urls + [
     path('dashboard/', DashboardView.as_view(), name='dashboard'),
     path('notifs/', NotifView.as_view(), name='notifications'),
-    # path('news/', 'ez', name='news'),
+    path('news/', 'ez', name='news'),
     # path('activities/', 'ez', name='activities'),
     path('hots/', HotsView.as_view(), name='hots')
 ]

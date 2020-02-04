@@ -30,6 +30,18 @@ class HotsView(generics.ListAPIView):
         return Response(data=PostSerializer(instance=posts, many=True).data, status=status.HTTP_200_OK)
 
 
+class NewsView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [Authentication]
+
+    def get(self, request, *args, **kwargs):
+        from socials.api.serializers import PostSerializer
+        return Response(
+            data=PostSerializer(instance=Post.objects.all().order_by('-created'), many=True).data,
+            status=status.HTTP_200_OK
+        )
+
+
 class DashboardView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [Authentication]
@@ -37,6 +49,7 @@ class DashboardView(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
 
         return Response(data={'ez':'ez'}, status=status.HTTP_200_OK)
+
 
 
 class PostView(viewsets.ModelViewSet):
