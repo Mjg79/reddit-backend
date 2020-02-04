@@ -3,6 +3,7 @@ from accounts.models import User, Profile
 from django.contrib.auth.validators import ASCIIUsernameValidator
 from socials.api.serializers import ChannelSerializer
 from socials.models import Channel
+from versatileimagefield.serializers import VersatileImageFieldSerializer
 
 
 class LoginSerializer(serializers.Serializer):
@@ -27,6 +28,13 @@ class ProfileSerializer(serializers.ModelSerializer):
     channels = serializers.SerializerMethodField(required=False)
     username = serializers.CharField(source='user.username')
     follow = serializers.SerializerMethodField()
+    picture = VersatileImageFieldSerializer(
+        sizes=[
+            ('full_size', 'url'),
+            ('thumbnail', 'thumbnail__100x100'),
+            ('medium_square_crop', 'crop__100x100'),
+        ]
+    )
 
     class Meta:
         model = Profile
@@ -59,16 +67,19 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class AuthorSerializer(serializers.ModelSerializer):
-    avatar = serializers.SerializerMethodField()
+    avatar = VersatileImageFieldSerializer(
+        sizes=[
+            ('full_size', 'url'),
+            ('thumbnail', 'thumbnail__100x100'),
+            ('medium_square_crop', 'crop__100x100'),
+        ]
+    )
     follow = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = ['id', 'username', 'avatar', 'follow']
         read_only_fields = fields
-
-    def get_avatar(self, obj: User):
-        return obj.personal_profile.picture.url if obj.personal_profile.picture else ''
 
     def get_follow(self, obj: User):
         user = self.context.get('user', None)

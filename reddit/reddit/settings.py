@@ -141,3 +141,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
+    'person_headshot': [
+        ('full_size', 'url'),
+        ('thumbnail', 'thumbnail__100x100'),
+        ('medium_square_crop', 'crop__100x100'),
+    ]
+}

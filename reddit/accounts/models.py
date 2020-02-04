@@ -75,7 +75,7 @@ class Profile(TimestampedModel):
     picture = VersatileImageField(
         verbose_name=_('picture'),
         blank=True,
-        upload_to=personal_profile_path,
+        upload_to='image/',
         max_length=255,
     )
 

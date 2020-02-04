@@ -2,6 +2,7 @@ from rest_framework import serializers
 from socials.models import *
 from jalali_date import datetime2jalali
 from django.contrib.contenttypes.models import ContentType
+from versatileimagefield.serializers import VersatileImageFieldSerializer
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -113,22 +114,32 @@ class ChannelSerializer(serializers.ModelSerializer):
 
 class ChannelDetailSerializer(serializers.ModelSerializer):
     authors = serializers.SerializerMethodField(required=False)
-    admin = serializers.SerializerMethodField(required=False)
+    user_admin = serializers.SerializerMethodField(required=False)
     no_followers = serializers.SerializerMethodField(required=False)
     no_posts = serializers.SerializerMethodField(required=False)
     posts = serializers.SerializerMethodField(required=False)
     follow = serializers.SerializerMethodField(required=False)
+    avatar = VersatileImageFieldSerializer(
+        sizes=[
+            ('full_size', 'url'),
+            ('thumbnail', 'thumbnail__100x100'),
+            ('medium_square_crop', 'crop__100x100'),
+        ]
+    )
 
     class Meta:
         model = Channel
-        fields = ['id', 'name', 'authors', 'admin', 'rules', 'avatar', 'no_followers', 'no_posts', 'posts', 'follow']
+        fields = [
+            'id', 'name', 'authors', 'admin', 'rules', 'avatar', 'user_admin',
+            'no_followers', 'no_posts', 'posts', 'follow'
+        ]
         read_only_fields = fields
 
     def get_authors(self, obj: Channel):
         from accounts.api.serializers import AuthorSerializer
         return AuthorSerializer(instance=obj.authors, many=True).data
 
-    def get_admin(self, obj: Channel):
+    def get_user_admin(self, obj: Channel):
         from accounts.api.serializers import UserSerializer
         return UserSerializer(instance=obj.admin).data
 

@@ -152,10 +152,9 @@ class ChannelView(viewsets.ModelViewSet):
     serializer_class = ChannelDetailSerializer
 
     def create(self, request, *args, **kwargs):
-        name = request.data.get('name', '')
-        rules = request.data.get('rules', '')
-        avatar = request.data.get('avatar', '')
-        ch = Channel.objects.create(name=name, admin=request.user, rules=rules, avatar=avatar)
+        serializer = ChannelDetailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        ch = serializer.save()
         return Response(data={'channel_id': ch.id}, status=status.HTTP_201_CREATED)
 
     def get_queryset(self):
