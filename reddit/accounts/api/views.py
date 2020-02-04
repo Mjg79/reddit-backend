@@ -12,6 +12,7 @@ from accounts.models import User, Profile
 from django.db import transaction
 from .serializers import LoginSerializer, UserSerializer, AuthorSerializer, ProfileSerializer
 from socials.api.serializers import ChannelSerializer
+from socials.models import Channel
 
 
 class UserView(viewsets.ModelViewSet):
@@ -113,6 +114,20 @@ class FollowView(viewsets.GenericViewSet):
                 'channels': ChannelSerializer(instance=user.followings_channel.all(), many=True).data,
             }
         )
+
+    @action(detail=True, methods=['put'])
+    def user(self, request, pk):
+        profile = Profile.objects.get(user__id=pk)
+        profile.followed_by.add(request.user)
+        profile.save()
+        return Response(status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['put'])
+    def channel(self, request, pk):
+        channel = Channel.objects.get(id=pk)
+        channel.followed_by.add(request.user)
+        channel.save()
+        return Response(status=status.HTTP_200_OK)
 
 
 
