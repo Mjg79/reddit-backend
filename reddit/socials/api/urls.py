@@ -9,6 +9,7 @@ router.include_root_view = False
 
 router.register('post', PostView, basename='post')
 router.register('channel', ChannelView, basename='channel')
+router.register('comment', CommentView, basename='comment')
 
 urlpatterns = router.urls + [
     path('dashboard/', DashboardView.as_view(), name='dashboard'),

@@ -3,7 +3,7 @@ from rest_framework.authentication import get_authorization_header
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .permissions import IsAuthor
+from .permissions import IsAuthor, IsFollowed
 from rest_framework.request import Request
 from rest_framework.response import Response
 from accounts.api.auth import Authentication
@@ -61,9 +61,10 @@ class PostView(viewsets.ModelViewSet):
             channels.append(d)
         return Response(data={'channels': channels}, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=['put'])
-    def feedback(self, request, pk):
+    @action(detail=False, methods=['put'], permission_classes=[IsFollowed])
+    def feedback(self, request):
         from socials.models import Like, FeedbackChoices
+        pk = request.data.get('id', 0)
         l = request.query_params.get('like', 0)
         if Like.objects.filter(feedbacker=request.user, post__id=pk).exists():
             like = Like.objects.get(feedbacker=request.user, post__id=pk)
@@ -84,9 +85,9 @@ class PostView(viewsets.ModelViewSet):
             like = Like.objects.create(feedbacker=request.user, feedback=choice, post=Post.objects.get(id=pk))
         return Response({'status': like.feedback}, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=['post'])
-    def comment(self, request, pk):
-        post = Post.objects.get(id=pk)
+    @action(detail=False, methods=['post'], permission_classes=[IsFollowed])
+    def comment(self, request):
+        post = Post.objects.get(id=request.data.get('id', 0))
         comment = Comment.objects.create(author=request.user, post=post, text=request.data.get('text', ''))
         return Response(data={'id': comment.id}, status=status.HTTP_201_CREATED)
 
@@ -117,4 +118,36 @@ class NotifView(generics.ListAPIView):
         lst = request.user.notifs.all()
         return Response(data=self.get_serializer(instance=lst, many=True).data, status=status.HTTP_200_OK)
 
+
+class CommentView(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=['put'], permission_classes=[IsFollowed])
+    def feedback(self, request):
+        pk = request.data.get('id', 0)
+        l = request.query_params.get('like', 0)
+        if Like.objects.filter(feedbacker=request.user, comment_id=pk).exists():
+            like = Like.objects.get(feedbacker=request.user, comment_id=pk)
+            if l == 0:
+                like.feedback = None
+            elif l == 1:
+                like.feedback = FeedbackChoices.POSITIVE
+            else:
+                like.feedback = FeedbackChoices.NEGATIVE
+            like.save()
+        else:
+            if l == 0:
+                choice = None
+            elif l == 1:
+                choice = FeedbackChoices.POSITIVE
+            else:
+                choice = FeedbackChoices.NEGATIVE
+            like = Like.objects.create(feedbacker=request.user, feedback=choice, comment=Comment.objects.get(id=pk))
+        return Response({'status': like.feedback}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['post'], permission_classes=[IsFollowed])
+    def comment(self, request):
+        comment = Comment.objects.get(id=request.data.get('id', ''))
+        c = Comment.objects.create(author=request.user, answering=comment, text=request.data.get('text', ''))
+        return Response(data={'id': c.id}, status=status.HTTP_201_CREATED)
 

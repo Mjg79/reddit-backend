@@ -2,7 +2,7 @@ from rest_framework import serializers
 from socials.models import *
 from jalali_date import datetime2jalali
 from django.contrib.contenttypes.models import ContentType
-
+from versatileimagefield.serializers import VersatileImageFieldSerializer
 
 class CommentSerializer(serializers.ModelSerializer):
     author_name = serializers.CharField(source='author.username')
@@ -76,7 +76,7 @@ class PostSerilaizerLite(serializers.ModelSerializer):
     def get_no_feedbacks(self, obj: Post):
         return {
             'likes': Like.objects.filter(post=obj, feedback=FeedbackChoices.POSITIVE).count(),
-            'dislikes': Like.objects.filter(post=obj, feedback=FeedbackChoices.NEGATIVE)
+            'dislikes': Like.objects.filter(post=obj, feedback=FeedbackChoices.NEGATIVE).count()
         }
 
 
