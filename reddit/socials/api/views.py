@@ -57,10 +57,34 @@ class PostView(viewsets.ModelViewSet):
         )
         channels = []
         for c in chs:
-            d = {'name': c.name, 'id': c.id}
-            d['avatar'] = c.avatar.url if c.avatar else ''
+            d = {'name': c.name, 'id': c.id, 'avatar': c.avatar.url if c.avatar else ''}
             channels.append(d)
         return Response(data={'channels': channels}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['put'])
+    def feedback(self, request, pk):
+        from socials.models import Like, FeedbackChoices
+        l = request.query_params.get('like', 0)
+        if Like.objects.filter(feedbacker=request.user, post__id=pk).exists():
+            like = Like.objects.get(feedbacker=request.user, post__id=pk)
+            if l == 0:
+                like.feedback = None
+            elif l == 1:
+                like.feedback = FeedbackChoices.POSITIVE
+            else:
+                like.feedback = FeedbackChoices.NEGATIVE
+            like.save()
+        else:
+            if l == 0:
+                choice = None
+            elif l == 1:
+                choice = FeedbackChoices.POSITIVE
+            else:
+                choice = FeedbackChoices.NEGATIVE
+            like = Like.objects.create(feedbacker=request.user, feedback=choice, post=Post.objects.get(id=pk))
+        return Response({'status': like.feedback}, status=status.HTTP_200_OK)
+
+
 
 
 class ChannelView(viewsets.ModelViewSet):
