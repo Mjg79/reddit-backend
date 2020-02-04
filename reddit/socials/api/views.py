@@ -42,6 +42,28 @@ class NewsView(generics.ListAPIView):
         )
 
 
+class ActivitiesView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [Authentication]
+
+    def get(self, request, *args, **kwargs):
+        post_ids = list(Comment.objects.filter(
+            author=request.user, answering=None
+        ).values_list('post__id', flat=True).distinct())
+        post_ids += list(Comment.objects.filter(
+            author=request.user, post=None).values_list('answering__post__id', flat=True).distinct())
+        post_ids += list(
+            Like.objects.filter(feedbacker=request.user, comment=None).values_list('post__id', flat=True).distinct()
+        )
+        post_ids += list(
+            Like.objects.filter(
+                feedbacker=request.user, post=None, comment__answering=None
+            ).values_list('comment__post__id', flat=True).distinct()
+        )
+        ps = Post.objects.filter(Q(author=request.user) | Q(id__in=post_ids))
+        return Response(data=PostSerializer(instance=ps, many=True).data, status=status.HTTP_200_OK)
+
+
 class DashboardView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [Authentication]
