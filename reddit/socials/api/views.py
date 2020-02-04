@@ -69,9 +69,14 @@ class DashboardView(generics.ListAPIView):
     authentication_classes = [Authentication]
 
     def get(self, request, *args, **kwargs):
-
-        return Response(data={'ez':'ez'}, status=status.HTTP_200_OK)
-
+        f_person_ids = request.user.followings_user.all().values_list('id', flat=True).distinct()
+        f_channel_ids = request.user.followings_channel.all().values_list('id', flat=True).distinct()
+        return Response(
+            data=PostSerializer(instance=Post.objects.filter(
+                Q(author__id__in=f_person_ids) | Q(channel__id__in=f_channel_ids))
+            ),
+            status=status.HTTP_200_OK
+        )
 
 
 class PostView(viewsets.ModelViewSet):
