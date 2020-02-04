@@ -36,7 +36,10 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'phone']
 
     def get_picture(self, obj: User):
-        return obj.personal_profile.picture.url if obj.personal_profile.picture else ''
+        if obj.personal_profile:
+            return obj.personal_profile.picture.url if obj.personal_profile.picture else ''
+        else:
+            return ''
 
 
 class ProfileSerializer(serializers.ModelSerializer):

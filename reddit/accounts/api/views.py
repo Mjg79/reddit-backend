@@ -138,6 +138,20 @@ class FollowView(viewsets.GenericViewSet):
         return Response(data=dict(), status=status.HTTP_200_OK)
 
 
+class ForgetpasswordView(generics.CreateAPIView):
+    permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        from django.core.mail import EmailMessage
+
+        email = request.data.get('email', None)
+        if not User.objects.filter(email=email).exists():
+            raise exceptions.NotAcceptable('You are NOT registerd')
+        if not email:
+            raise exceptions.NotAcceptable('Dont have any emails')
+        mail = EmailMessage('you said that you forgot your password', 'ascljhsca', to=[email])
+
+        return Response(data=dict(), status=status.HTTP_200_OK)
 
 
 

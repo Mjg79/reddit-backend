@@ -14,4 +14,5 @@ router.register('profile', ProfileView, basename='profile')
 urlpatterns = router.urls + [
     path('login/', LoginView.as_view(), name='login'),
     path('update/', UserUpdateView.as_view(), name='update'),
+    path('forgot-password/', ForgetpasswordView.as_view(), name='forgot-password')
 ]
