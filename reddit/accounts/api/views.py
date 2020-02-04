@@ -81,7 +81,7 @@ class ProfileView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Profile.objects.filter(self.request.query_params.get('id', 0))
+        return Profile.objects.filter(id=self.request.query_params.get('id', 0))
 
 
 class FollowView(viewsets.GenericViewSet):
