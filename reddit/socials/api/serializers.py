@@ -51,7 +51,7 @@ class PostSerializer(serializers.ModelSerializer):
     def get_no_feedbacks(self, obj: Post):
         return {
             'likes':Like.objects.filter(post=obj, feedback=FeedbackChoices.POSITIVE).count(),
-            'dislikes':Like.objects.filter(post=obj, feedback=FeedbackChoices.NEGATIVE)
+            'dislikes':Like.objects.filter(post=obj, feedback=FeedbackChoices.NEGATIVE).count()
         }
 
     def get_channel(self, obj: Post):

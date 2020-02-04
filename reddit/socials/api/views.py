@@ -85,7 +85,7 @@ class PostView(viewsets.ModelViewSet):
         return Response({'status': like.feedback}, status=status.HTTP_200_OK)
 
     # @action(detail=True, methods=['post'])
-    # def comment(self, request, pk):
+    #     # def comment(self, request, pk):
 
 
 class ChannelView(viewsets.ModelViewSet):
