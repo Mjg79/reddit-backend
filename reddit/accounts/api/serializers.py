@@ -26,10 +26,14 @@ class ProfileSerializer(serializers.ModelSerializer):
     no_posts = serializers.SerializerMethodField(required=False)
     channels = serializers.SerializerMethodField(required=False)
     username = serializers.CharField(source='user.username')
+    follow = serializers.SerializerMethodField(required=True)
 
     class Meta:
         model = Profile
-        fields = ['user', 'username', 'birth_date', 'no_followings', 'no_followers', 'no_posts', 'channels', 'bio', 'picture']
+        fields = [
+            'user', 'username', 'birth_date', 'no_followings', 'no_followers',
+            'no_posts', 'channels', 'bio', 'picture', 'follow'
+        ]
 
     def get_no_followers(self, obj: Profile):
         return obj.followed_by.count()
@@ -46,6 +50,12 @@ class ProfileSerializer(serializers.ModelSerializer):
             id__in=list(obj.user.channels_author.all().values_list('id', flat=True)) + list(obj.user.channels_admin.all().values_list('id', flat=True))
         )
         return ChannelSerializer(instance=chs, many=True).data
+
+    def get_follow(self, obj: User):
+        user = self.context.get('user', None)
+        if not user:
+            return False
+        return user in obj.personal_profile.followed_by.all()
 
 
 class AuthorSerializer(serializers.ModelSerializer):
