@@ -87,7 +87,7 @@ class PostView(viewsets.ModelViewSet):
 
 class ChannelView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
-    serializer_class = ChannelSerializer
+    serializer_class = ChannelDetailSerializer
 
     def create(self, request, *args, **kwargs):
         name = request.data.get('name', '')

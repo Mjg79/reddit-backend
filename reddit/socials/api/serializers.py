@@ -24,10 +24,11 @@ class PostSerializer(serializers.ModelSerializer):
     comments = serializers.SerializerMethodField()
     create_time = serializers.SerializerMethodField()
     like = serializers.SerializerMethodField()
+    no_feedbacks = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ['id', 'text', 'author', 'channel', 'comments', 'create_time', 'like']
+        fields = ['id', 'text', 'author', 'channel', 'comments', 'create_time', 'like', 'no_feedbacks']
         read_only_fields = fields
 
     def get_comments(self, obj: Post):
@@ -47,8 +48,36 @@ class PostSerializer(serializers.ModelSerializer):
         else:
             return 0
 
+    def get_no_feedbacks(self, obj: Post):
+        return {
+            'likes':Like.objects.filter(post=obj, feedback=FeedbackChoices.POSITIVE).count(),
+            'dislikes':Like.objects.filter(post=obj, feedback=FeedbackChoices.NEGATIVE)
+        }
+
     def get_channel(self, obj: Post):
         return ChannelSerializer(instance=obj.channel).data if obj.channel else {}
+
+
+class PostSerilaizerLite(serializers.ModelSerializer):
+    no_feedbacks = serializers.SerializerMethodField()
+    like = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Post
+        fields = ['id', 'text', 'author', 'no_feedbacks', 'like']
+
+    def get_like(self, obj: Post):
+        like = Like.objects.filter(feedbacker=self.context['request'].user, post=obj)
+        if like.exists():
+            return 1 if like.filter(feedback=FeedbackChoices.POSITIVE).exists() else -1
+        else:
+            return 0
+
+    def get_no_feedbacks(self, obj: Post):
+        return {
+            'likes': Like.objects.filter(post=obj, feedback=FeedbackChoices.POSITIVE).count(),
+            'dislikes': Like.objects.filter(post=obj, feedback=FeedbackChoices.NEGATIVE)
+        }
 
 
 class ChannelSerializer(serializers.ModelSerializer):
@@ -56,6 +85,7 @@ class ChannelSerializer(serializers.ModelSerializer):
     admin = serializers.SerializerMethodField(required=False)
     no_followers = serializers.SerializerMethodField(required=False)
     no_posts = serializers.SerializerMethodField(required=False)
+    posts = serializers.SerializerMethodField(required=False)
 
     class Meta:
         model = Channel
@@ -75,6 +105,36 @@ class ChannelSerializer(serializers.ModelSerializer):
 
     def get_no_posts(self, obj: Channel):
         return Post.objects.filter(channel=obj).count()
+
+
+class ChannelDetailSerializer(serializers.ModelSerializer):
+    authors = serializers.SerializerMethodField(required=False)
+    admin = serializers.SerializerMethodField(required=False)
+    no_followers = serializers.SerializerMethodField(required=False)
+    no_posts = serializers.SerializerMethodField(required=False)
+    posts = serializers.SerializerMethodField(required=False)
+
+    class Meta:
+        model = Channel
+        fields = ['id', 'name', 'authors', 'admin', 'rules', 'avatar', 'no_followers', 'no_posts', 'posts']
+        read_only_fields = fields
+
+    def get_authors(self, obj: Channel):
+        from accounts.api.serializers import AuthorSerializer
+        return AuthorSerializer(instance=obj.authors, many=True).data
+
+    def get_admin(self, obj: Channel):
+        from accounts.api.serializers import UserSerializer
+        return UserSerializer(instance=obj.admin).data
+
+    def get_no_followers(self, obj: Channel):
+        return obj.followed_by.count()
+
+    def get_no_posts(self, obj: Channel):
+        return Post.objects.filter(channel=obj).count()
+
+    def get_posts(self, obj: Channel):
+        return PostSerilaizerLite(instance=obj.posts.all(), many=True, context=self.context).data
 
 
 class NotificationSerializer(serializers.ModelSerializer):
