@@ -77,16 +77,11 @@ class LoginView(generics.CreateAPIView):
         )
 
 
-class ProfileView(generics.RetrieveAPIView):
+class ProfileView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
-    def retrieve(self, request, *args, **kwargs):
-        pk = request.query_params.get('id', None)
-        if not pk:
-            raise exceptions.NotFound
-        return Response(
-            data=ProfileSerializer(instance=Profile.objects.get(user__id=pk)).data, status=status.HTTP_200_OK
-        )
+    def get_queryset(self):
+        return Profile.objects.filter(self.request.query_params.get('id', 0))
 
 
 class FollowView(viewsets.GenericViewSet):
@@ -124,7 +119,7 @@ class FollowView(viewsets.GenericViewSet):
         else:
             profile.followed_by.add(request.user)
         profile.save()
-        return Response(status=status.HTTP_200_OK)
+        return Response(data=dict(), status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['put'])
     def channel(self, request, pk):
@@ -134,7 +129,7 @@ class FollowView(viewsets.GenericViewSet):
         else:
             channel.followed_by.add(request.user)
         channel.save()
-        return Response(status=status.HTTP_200_OK)
+        return Response(data=dict(), status=status.HTTP_200_OK)
 
 
 

@@ -21,15 +21,15 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-    no_followings = serializers.SerializerMethodField()
-    no_followers = serializers.SerializerMethodField()
-    no_posts = serializers.SerializerMethodField()
-    channels = serializers.SerializerMethodField()
+    no_followings = serializers.SerializerMethodField(required=False)
+    no_followers = serializers.SerializerMethodField(required=False)
+    no_posts = serializers.SerializerMethodField(required=False)
+    channels = serializers.SerializerMethodField(required=False)
     username = serializers.CharField(source='user.username')
 
     class Meta:
         model = Profile
-        fields = ['username', 'birth_date', 'no_followings', 'no_followers', 'no_posts', 'channels', 'bio']
+        fields = ['user', 'username', 'birth_date', 'no_followings', 'no_followers', 'no_posts', 'channels', 'bio', 'picture']
 
     def get_no_followers(self, obj: Profile):
         return obj.followed_by.count()
