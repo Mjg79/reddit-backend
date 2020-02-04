@@ -79,6 +79,7 @@ class LoginView(generics.CreateAPIView):
 
 class ProfileView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
+    serializer_class = ProfileSerializer
 
     def get_queryset(self):
         return Profile.objects.filter(id=self.request.query_params.get('id', 0))

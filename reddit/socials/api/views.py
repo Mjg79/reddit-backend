@@ -11,8 +11,23 @@ from django.utils.html import strip_tags
 from django.contrib.auth import user_logged_in, user_logged_out
 from accounts.models import User
 from django.db import transaction
-from socials.models import Post
+from socials.models import Post, FeedbackChoices
 from .serializers import *
+from django.utils import timezone
+from datetime import timedelta
+from django.db.models import *
+
+
+class HotsView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [Authentication]
+
+    def get(self, request, *args, **kwargs):
+        from socials.api.serializers import PostSerializer
+        posts = Post.objects.filter(created__gte=timezone.now() - timedelta(days=7)).annotate(
+            likes=Count('likes', filter=Q(likes__feedback=FeedbackChoices.POSITIVE))
+        ).order_by('-likes')
+        return Response(data=PostSerializer(instance=posts, many=True).data, status=status.HTTP_200_OK)
 
 
 class DashboardView(generics.ListAPIView):
