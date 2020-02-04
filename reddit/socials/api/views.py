@@ -92,6 +92,7 @@ class PostView(viewsets.ModelViewSet):
         return Response(data={'id': comment.id}, status=status.HTTP_201_CREATED)
 
 
+
 class ChannelView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = ChannelDetailSerializer
@@ -151,3 +152,10 @@ class CommentView(viewsets.ViewSet):
         c = Comment.objects.create(author=request.user, answering=comment, text=request.data.get('text', ''))
         return Response(data={'id': c.id}, status=status.HTTP_201_CREATED)
 
+    @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated])
+    def answers(self, request, pk):
+        comment = Comment.objects.get(id=pk)
+        return Response(
+            data=CommentSerializer(instance=comment.answers.all(), many=True).data,
+            status=status.HTTP_200_OK
+        )
