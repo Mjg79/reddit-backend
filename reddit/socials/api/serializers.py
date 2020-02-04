@@ -2,7 +2,7 @@ from rest_framework import serializers
 from socials.models import *
 from jalali_date import datetime2jalali
 from django.contrib.contenttypes.models import ContentType
-from versatileimagefield.serializers import VersatileImageFieldSerializer
+
 
 class CommentSerializer(serializers.ModelSerializer):
     author_name = serializers.CharField(source='author.username')
@@ -61,10 +61,11 @@ class PostSerializer(serializers.ModelSerializer):
 class PostSerilaizerLite(serializers.ModelSerializer):
     no_feedbacks = serializers.SerializerMethodField()
     like = serializers.SerializerMethodField()
+    user = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ['id', 'text', 'author', 'no_feedbacks', 'like']
+        fields = ['id', 'text', 'user', 'no_feedbacks', 'like']
 
     def get_like(self, obj: Post):
         like = Like.objects.filter(feedbacker=self.context['request'].user, post=obj)
@@ -78,6 +79,10 @@ class PostSerilaizerLite(serializers.ModelSerializer):
             'likes': Like.objects.filter(post=obj, feedback=FeedbackChoices.POSITIVE).count(),
             'dislikes': Like.objects.filter(post=obj, feedback=FeedbackChoices.NEGATIVE).count()
         }
+
+    def get_user(self, obj: Post):
+        from accounts.api.serializers import AuthorSerializer
+        return AuthorSerializer(instance=obj.author, context=self.context).data
 
 
 class ChannelSerializer(serializers.ModelSerializer):

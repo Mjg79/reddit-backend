@@ -92,7 +92,6 @@ class PostView(viewsets.ModelViewSet):
         return Response(data={'id': comment.id}, status=status.HTTP_201_CREATED)
 
 
-
 class ChannelView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = ChannelDetailSerializer
