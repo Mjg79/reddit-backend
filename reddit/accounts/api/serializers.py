@@ -26,7 +26,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     no_posts = serializers.SerializerMethodField(required=False)
     channels = serializers.SerializerMethodField(required=False)
     username = serializers.CharField(source='user.username')
-    follow = serializers.SerializerMethodField(required=True)
+    follow = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
