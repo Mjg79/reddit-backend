@@ -10,7 +10,7 @@ from django.utils.html import strip_tags
 from django.contrib.auth import user_logged_in, user_logged_out
 from accounts.models import User, Profile
 from django.db import transaction
-from .serializers import LoginSerializer, UserSerializer, AuthorSerializer, ProfileSerializer
+from .serializers import LoginSerializer, UserSerializer, AuthorSerializer, ProfileSerializer, UploadSerializer
 from socials.api.serializers import ChannelSerializer
 from socials.models import Channel
 
@@ -40,8 +40,10 @@ class UserUpdateView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
 
     def put(self, request, *args, **kwargs):
-        data = request.data
         user = request.user
+        serializer = UploadSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
         if not data.get('email', None):
             raise exceptions.NotAcceptable('ez')
         user.first_name = data.get('first_name', '')

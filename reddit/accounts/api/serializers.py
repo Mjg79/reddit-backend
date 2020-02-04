@@ -13,6 +13,20 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=20)
 
 
+class UploadSerializer(serializers.ModelSerializer):
+    picture = VersatileImageFieldSerializer(
+        sizes=[
+            ('full_size', 'url'),
+            ('thumbnail', 'thumbnail__100x100'),
+            ('medium_square_crop', 'crop__100x100'),
+        ]
+    )
+
+    class Meta:
+        model = User
+        fields = ['phone', 'first_name', 'last_name', 'email', 'picture']
+
+
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
