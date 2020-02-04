@@ -61,11 +61,11 @@ class PostSerializer(serializers.ModelSerializer):
 class PostSerilaizerLite(serializers.ModelSerializer):
     no_feedbacks = serializers.SerializerMethodField()
     like = serializers.SerializerMethodField()
-    user = serializers.SerializerMethodField()
+    author = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ['id', 'text', 'user', 'no_feedbacks', 'like']
+        fields = ['id', 'text', 'author', 'no_feedbacks', 'like']
 
     def get_like(self, obj: Post):
         like = Like.objects.filter(feedbacker=self.context['request'].user, post=obj)
@@ -80,7 +80,7 @@ class PostSerilaizerLite(serializers.ModelSerializer):
             'dislikes': Like.objects.filter(post=obj, feedback=FeedbackChoices.NEGATIVE).count()
         }
 
-    def get_user(self, obj: Post):
+    def get_author(self, obj: Post):
         from accounts.api.serializers import AuthorSerializer
         return AuthorSerializer(instance=obj.author, context=self.context).data
 
@@ -117,6 +117,7 @@ class ChannelDetailSerializer(serializers.ModelSerializer):
     no_followers = serializers.SerializerMethodField(required=False)
     no_posts = serializers.SerializerMethodField(required=False)
     posts = serializers.SerializerMethodField(required=False)
+    follow = serializers.SerializerMethodField(required=False)
 
     class Meta:
         model = Channel
@@ -139,6 +140,10 @@ class ChannelDetailSerializer(serializers.ModelSerializer):
 
     def get_posts(self, obj: Channel):
         return PostSerilaizerLite(instance=obj.posts.all(), many=True, context=self.context).data
+
+    def get_follow(self, obj: Channel):
+        return self.context['request'].user in obj.followed_by.all()
+
 
 
 class NotificationSerializer(serializers.ModelSerializer):
