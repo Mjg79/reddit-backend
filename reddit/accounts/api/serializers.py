@@ -29,7 +29,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ['username', 'gender', 'birth_date', 'no_followings', 'no_followers', 'no_posts', 'channels']
+        fields = ['username', 'gender', 'birth_date', 'no_followings', 'no_followers', 'no_posts', 'channels', 'bio']
 
     def get_no_followers(self, obj: Profile):
         return obj.followed_by.count()

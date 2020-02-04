@@ -69,7 +69,8 @@ class Post(TimestampedModel, ActivatedModel):
     channel = models.ForeignKey(
         to=Channel,
         on_delete=models.CASCADE,
-        related_name='posts'
+        related_name='posts',
+        null=True
     )
     image = VersatileImageField(
         verbose_name='image',

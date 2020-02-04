@@ -19,14 +19,15 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    author_name = serializers.CharField(source='author.username')
-    channel_id = serializers.CharField(source='channel.id')
+    author = serializers.SerializerMethodField()
+    channel = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
     create_time = serializers.SerializerMethodField()
+    like = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ['id', 'text', 'author_name', 'channel_id', 'comments', 'create_time']
+        fields = ['id', 'text', 'author', 'channel', 'comments', 'create_time', 'like']
         read_only_fields = fields
 
     def get_comments(self, obj: Post):
@@ -34,6 +35,20 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_create_time(self, obj: Post):
         return datetime2jalali(obj.created).strftime('%Y/%m/%d %H:%M') if obj.created else ''
+
+    def get_author(self, obj: Post):
+        from accounts.api.serializers import AuthorSerializer
+        return AuthorSerializer(instance=obj.author).data
+
+    def get_like(self, obj: Post):
+        like = Like.objects.filter(feedbacker=self.context['request'].user, post=obj)
+        if like.exists():
+            return 1 if like.filter(feedback=FeedbackChoices.POSITIVE).exists() else -1
+        else:
+            return 0
+
+    def get_channel(self, obj: Post):
+        return ChannelSerializer(instance=obj.channel).data if obj.channel else {}
 
 
 class ChannelSerializer(serializers.ModelSerializer):
@@ -65,11 +80,11 @@ class NotificationSerializer(serializers.ModelSerializer):
 
     def get_For(self, obj: Notification):
         if obj.audience_type == ContentType.objects.get(model='post'):
-            data = {'mode':'post'}
+            data = {'model': 'post'}
         elif obj.audience_type == ContentType.objects.get(model='comment'):
-            data = {'model':'comment'}
+            data = {'model': 'comment'}
         else:
-            data = {'model':'follow'}
+            data = {'model': 'follow'}
         data['id'] = obj.audience_id
         return data
 

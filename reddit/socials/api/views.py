@@ -34,10 +34,11 @@ class PostView(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         text = request.data.get('caption', '')
         channel_id = request.data.get('channel_id', '')
-        channel = Channel.objects.get(id=channel_id)
-        if channel_id and request.user in channel.authors.all():
-            raise exceptions.PermissionDenied
-        post = Post.objects.create(text=text, channel=Channel.objects.get(id=channel_id), author=request.user)
+        try:
+            channel = Channel.objects.get(id=channel_id)
+        except:
+            channel = None
+        post = Post.objects.create(text=text, channel=channel, author=request.user)
         serializer = self.get_serializer(instance=post)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 

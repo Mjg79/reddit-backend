@@ -66,19 +66,20 @@ class Profile(TimestampedModel):
         related_name='personal_profile',
         on_delete=models.CASCADE
     )
-    gender = models.CharField(
-        verbose_name=_('gender'),
-        max_length=32,
-        choices=GenderChoices.choices,
-        validators=[GenderChoices.validator],
-        blank=True,
-        help_text=_('Designates gender of the user in profile'),
-    )
+    # gender = models.CharField(
+    #     verbose_name=_('gender'),
+    #     max_length=32,
+    #     choices=GenderChoices.choices,
+    #     validators=[GenderChoices.validator],
+    #     blank=True,
+    #     help_text=_('Designates gender of the user in profile'),
+    # )
     birth_date = models.DateField(
         verbose_name=_('birth date'),
         blank=True,
         null=True
     )
+    bio = models.TextField(null=True, blank=True)
     picture = VersatileImageField(
         verbose_name=_('picture'),
         blank=True,
