@@ -84,6 +84,9 @@ class PostView(viewsets.ModelViewSet):
             like = Like.objects.create(feedbacker=request.user, feedback=choice, post=Post.objects.get(id=pk))
         return Response({'status': like.feedback}, status=status.HTTP_200_OK)
 
+    # @action(detail=True, methods=['post'])
+    # def comment(self, request, pk):
+
 
 class ChannelView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]

@@ -85,7 +85,6 @@ class ChannelSerializer(serializers.ModelSerializer):
     admin = serializers.SerializerMethodField(required=False)
     no_followers = serializers.SerializerMethodField(required=False)
     no_posts = serializers.SerializerMethodField(required=False)
-    posts = serializers.SerializerMethodField(required=False)
 
     class Meta:
         model = Channel
