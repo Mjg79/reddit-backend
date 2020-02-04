@@ -48,6 +48,8 @@ class UserUpdateView(generics.UpdateAPIView):
         user.last_name = data.get('last_name', '')
         user.email = data.get('email', '')
         user.phone = data.get('phone', '')
+        user.personal_profile.picture = data.get('picture', '')
+        user.personal_profile.save()
         user.save()
         return Response(UserSerializer(instance=user).data, status=status.HTTP_200_OK)
 
