@@ -52,10 +52,10 @@ class ProfileSerializer(serializers.ModelSerializer):
         return ChannelSerializer(instance=chs, many=True).data
 
     def get_follow(self, obj: User):
-        user = self.context['request'].get('user', None)
+        user = self.context['request'].user
         if not user:
             return False
-        return user in obj.personal_profile.followed_by.all()
+        return user in obj.followed_by.all()
 
 
 class AuthorSerializer(serializers.ModelSerializer):
