@@ -213,3 +213,26 @@ class CommentView(viewsets.ViewSet):
             data=CommentSerializer(instance=comment.answers.all(), many=True).data,
             status=status.HTTP_200_OK
         )
+
+
+class SearchView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        from accounts.api.serializers import AuthorSerializer
+
+        q = request.query_params.get('q', '')
+        posts = Post.objects.filter(text__icontains=q)
+        channels = Channel.objects.filter(name__icontains=q)
+        users = User.objects.filter(
+            Q(username__icontains=q) |
+            Q(first_name__icontains=q) |
+            Q(last_name__icontains=q)
+        )
+        data = {
+            'channels': ChannelSerializer(instance=channels, many=True).data,
+            'users': AuthorSerializer(instance=users, many=True).data,
+            'posts': PostSerilaizerLite(instance=posts, many=True).data
+        }
+        return Response(data=data, status=status.HTTP_200_OK)
+

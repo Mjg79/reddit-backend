@@ -16,5 +16,6 @@ urlpatterns = router.urls + [
     path('notifs/', NotifView.as_view(), name='notifications'),
     path('news/', NewsView.as_view(), name='news'),
     path('activities/',  ActivitiesView.as_view(), name='activities'),
-    path('hots/', HotsView.as_view(), name='hots')
+    path('hots/', HotsView.as_view(), name='hots'),
+    path('search/', SearchView.as_view(), name='search')
 ]
