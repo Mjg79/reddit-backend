@@ -41,9 +41,10 @@ class UserUpdateView(generics.UpdateAPIView):
 
     def put(self, request, *args, **kwargs):
         user = request.user
-        serializer = UploadSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        data = serializer.validated_data
+        # serializer = UploadSerializer(data=request.data)
+        # serializer.is_valid(raise_exception=True)
+        # data = serializer.validated_data
+        data = request.data
         if not data.get('email', None):
             raise exceptions.NotAcceptable('ez')
         user.first_name = data.get('first_name', '')
