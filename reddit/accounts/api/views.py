@@ -117,15 +117,22 @@ class FollowView(viewsets.GenericViewSet):
 
     @action(detail=True, methods=['put'])
     def user(self, request, pk):
+        action = request.query_params.get('action', '')
         profile = Profile.objects.get(user__id=pk)
-        profile.followed_by.add(request.user)
+        if action == 'unfollow':
+            profile.followed_by.remove(request.user)
+        else:
+            profile.followed_by.add(request.user)
         profile.save()
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['put'])
     def channel(self, request, pk):
         channel = Channel.objects.get(id=pk)
-        channel.followed_by.add(request.user)
+        if request.query_params.get('action', '') == 'unfollow':
+            channel.followed_by.remove(request.user)
+        else:
+            channel.followed_by.add(request.user)
         channel.save()
         return Response(status=status.HTTP_200_OK)
 
