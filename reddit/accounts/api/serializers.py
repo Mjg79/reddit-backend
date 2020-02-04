@@ -28,11 +28,15 @@ class UploadSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    picture = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['id', 'phone', 'first_name', 'last_name', 'email', 'username']
+        fields = ['id', 'phone', 'first_name', 'last_name', 'email', 'username', 'picture']
         read_only_fields = ['id', 'phone']
+
+    def get_picture(self, obj: User):
+        return obj.personal_profile.picture.url if obj.personal_profile.picture else ''
 
 
 class ProfileSerializer(serializers.ModelSerializer):
