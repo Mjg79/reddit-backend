@@ -84,8 +84,11 @@ class PostView(viewsets.ModelViewSet):
             like = Like.objects.create(feedbacker=request.user, feedback=choice, post=Post.objects.get(id=pk))
         return Response({'status': like.feedback}, status=status.HTTP_200_OK)
 
-    # @action(detail=True, methods=['post'])
-    #     # def comment(self, request, pk):
+    @action(detail=True, methods=['post'])
+    def comment(self, request, pk):
+        post = Post.objects.get(id=pk)
+        comment = Comment.objects.create(author=request.user, post=post, text=request.data.get('text', ''))
+        return Response(data={'id': comment.id}, status=status.HTTP_201_CREATED)
 
 
 class ChannelView(viewsets.ModelViewSet):
