@@ -73,7 +73,7 @@ class ChannelSerializer(serializers.ModelSerializer):
     def get_no_followers(self, obj: Channel):
         return obj.followed_by.count()
 
-    def get_no_followers(self, obj: Channel):
+    def get_no_posts(self, obj: Channel):
         return Post.objects.filter(channel=obj).count()
 
 
