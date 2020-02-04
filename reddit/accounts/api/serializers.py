@@ -42,13 +42,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     channels = serializers.SerializerMethodField(required=False)
     username = serializers.CharField(source='user.username')
     follow = serializers.SerializerMethodField()
-    picture = VersatileImageFieldSerializer(
-        sizes=[
-            ('full_size', 'url'),
-            ('thumbnail', 'thumbnail__100x100'),
-            ('medium_square_crop', 'crop__100x100'),
-        ]
-    )
+    picture = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
@@ -73,11 +67,14 @@ class ProfileSerializer(serializers.ModelSerializer):
         )
         return ChannelSerializer(instance=chs, many=True).data
 
-    def get_follow(self, obj: User):
+    def get_follow(self, obj: Profile):
         user = self.context['request'].user
         if not user:
             return False
         return user in obj.followed_by.all()
+
+    def get_picture(self, obj: Profile):
+        return obj.picture.url if obj.picture else ''
 
 
 class AuthorSerializer(serializers.ModelSerializer):
