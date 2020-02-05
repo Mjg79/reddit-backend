@@ -25,8 +25,8 @@ class HotsView(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         from socials.api.serializers import PostSerializer
         posts = Post.objects.filter(created__gte=timezone.now() - timedelta(days=7)).annotate(
-            likes=Count('likes', filter=Q(likes__feedback=FeedbackChoices.POSITIVE))
-        ).order_by('-likes')
+            like=Count('likes', filter=Q(likes__feedback=FeedbackChoices.POSITIVE))
+        ).order_by('-like')
         return Response(data=PostSerializer(instance=posts, many=True).data, status=status.HTTP_200_OK)
 
 
