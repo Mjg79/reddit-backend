@@ -169,17 +169,21 @@ class ChannelView(viewsets.ModelViewSet):
         return []
 
 
-class NotifView(generics.ListAPIView):
+class NotifView(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = NotificationSerializer
     queryset = Notification.objects.none()
 
-    def list(self, request, *args, **kwargs):
+    def retrieve(self, request, *args, **kwargs):
+        lst = request.user.notifs.filter(seen=False)
+        return Response(data=self.get_serializer(instance=lst, many=True).data, status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
         lst = request.user.notifs.filter(seen=False)
         for n in lst:
             n.seen = True
             n.save()
-        return Response(data=self.get_serializer(instance=lst, many=True).data, status=status.HTTP_200_OK)
+        return Response(dict(), status.HTTP_200_OK)
 
 
 class CommentView(viewsets.ViewSet):
