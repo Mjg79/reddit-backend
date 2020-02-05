@@ -156,6 +156,10 @@ class Notification(TimestampedModel):
         related_name='notifs_sent',
         null=True
     )
+    seen = models.BooleanField(
+        verbose_name='seen',
+        default=False
+    )
     audience_type = models.ForeignKey(
         to=ContentType,
         verbose_name='audience type',

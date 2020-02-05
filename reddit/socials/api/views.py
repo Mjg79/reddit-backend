@@ -174,7 +174,10 @@ class NotifView(generics.ListAPIView):
     serializer_class = NotificationSerializer
 
     def list(self, request, *args, **kwargs):
-        lst = request.user.notifs.all()
+        lst = request.user.notifs.filter(seen=False)
+        for n in lst:
+            n.seen = True
+            n.save()
         return Response(data=self.get_serializer(instance=lst, many=True).data, status=status.HTTP_200_OK)
 
 
