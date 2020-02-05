@@ -19,6 +19,7 @@ from django.db.models import *
 
 
 class HotsView(generics.ListAPIView):
+    queryset = Post.objects.none()
     permission_classes = [IsAuthenticated]
     authentication_classes = [Authentication]
 
@@ -31,6 +32,7 @@ class HotsView(generics.ListAPIView):
 
 
 class NewsView(generics.ListAPIView):
+    queryset = Post.objects.none()
     permission_classes = [IsAuthenticated]
     authentication_classes = [Authentication]
 
@@ -43,6 +45,7 @@ class NewsView(generics.ListAPIView):
 
 
 class ActivitiesView(generics.ListAPIView):
+    queryset = Post.objects.none()
     permission_classes = [IsAuthenticated]
     authentication_classes = [Authentication]
 
@@ -65,6 +68,7 @@ class ActivitiesView(generics.ListAPIView):
 
 
 class DashboardView(generics.ListAPIView):
+    queryset = Post.objects.none()
     permission_classes = [IsAuthenticated]
     authentication_classes = [Authentication]
 
