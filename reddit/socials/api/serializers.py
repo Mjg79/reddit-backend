@@ -156,14 +156,14 @@ class ChannelDetailSerializer(serializers.ModelSerializer):
         return self.context['request'].user in obj.followed_by.all()
 
 
-
 class NotificationSerializer(serializers.ModelSerializer):
     For = serializers.SerializerMethodField()
     who_name = serializers.SerializerMethodField()
+    who_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Notification
-        fields = ['situation', 'audience_type', 'For', 'who_name']
+        fields = ['situation', 'audience_type', 'For', 'who_name', 'who_id']
         read_only_fields = fields
 
     def get_For(self, obj: Notification):
@@ -175,6 +175,9 @@ class NotificationSerializer(serializers.ModelSerializer):
             data = {'model': 'follow'}
         data['id'] = obj.audience_id
         return data
+
+    def get_who_id(self, obj: Notification):
+        return obj.who.id
 
     def get_who_name(self, obj: Notification):
         return obj.who.first_name + ' ' + obj.who.last_name
