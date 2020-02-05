@@ -73,8 +73,9 @@ class DashboardView(generics.ListAPIView):
         f_channel_ids = request.user.followings_channel.all().values_list('id', flat=True).distinct()
         return Response(
             data=PostSerializer(instance=Post.objects.filter(
-                Q(author__id__in=f_person_ids) | Q(channel__id__in=f_channel_ids))
-            ),
+                Q(author__id__in=f_person_ids) | Q(channel__id__in=f_channel_ids)
+            )
+            ).data,
             status=status.HTTP_200_OK
         )
 
