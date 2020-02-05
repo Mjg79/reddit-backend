@@ -85,19 +85,16 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class AuthorSerializer(serializers.ModelSerializer):
-    avatar = VersatileImageFieldSerializer(
-        sizes=[
-            ('full_size', 'url'),
-            ('thumbnail', 'thumbnail__100x100'),
-            ('medium_square_crop', 'crop__100x100'),
-        ]
-    )
     follow = serializers.SerializerMethodField()
+    avatar = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'avatar', 'follow']
+        fields = ['id', 'username', 'follow', 'avatar']
         read_only_fields = fields
+
+    def get_avatar(self, obj: User):
+        return obj.personal_profile.picture.url if obj.personal_profile.picture else ''
 
     def get_follow(self, obj: User):
         user = self.context.get('user', None)
