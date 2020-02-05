@@ -9,6 +9,8 @@ from regions.models import City
 from regions.abstractModels import TimestampedModel
 from djchoices import ChoiceItem, DjangoChoices
 from versatileimagefield.fields import VersatileImageField
+from django.conf import settings
+from django.utils import timezone
 
 __all__ = [
     'User',
@@ -17,8 +19,10 @@ __all__ = [
 ]
 
 
-def personal_profile_path(instance):
-    return os.path.join(instance.user.username)
+def personal_profile_path(instance, img):
+    time = timezone.now()
+    path = f'{instance.user.username}/{time.year}/{time.month}/{img}'
+    return path
 
 
 class User(AbstractUser):
@@ -75,7 +79,7 @@ class Profile(TimestampedModel):
     picture = VersatileImageField(
         verbose_name=_('picture'),
         blank=True,
-        upload_to='image/',
+        upload_to=personal_profile_path,
         max_length=255,
     )
 

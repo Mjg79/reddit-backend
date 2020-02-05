@@ -46,7 +46,7 @@ class UserUpdateView(generics.UpdateAPIView):
         # data = serializer.validated_data
         data = request.data
         if not data.get('email', None):
-            raise exceptions.NotAcceptable('ez')
+            raise exceptions.NotAcceptable('please enter an email')
         user.first_name = data.get('first_name', '')
         user.last_name = data.get('last_name', '')
         user.email = data.get('email', '')
