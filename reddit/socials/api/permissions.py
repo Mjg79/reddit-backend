@@ -17,7 +17,7 @@ class IsFollowed(permissions.BasePermission):
             obj = Post.objects.get(id=request.data['id'])
         except:
             obj = Comment.objects.get(id=request.data['id'])
-        if isinstance(Comment, obj):
+        if isinstance(obj, Comment):
             if obj.post:
                 obj = obj.post
             else:
