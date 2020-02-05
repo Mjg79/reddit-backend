@@ -27,7 +27,7 @@ class HotsView(generics.ListAPIView):
         posts = Post.objects.filter(created__gte=timezone.now() - timedelta(days=7)).annotate(
             like=Count('likes', filter=Q(likes__feedback=FeedbackChoices.POSITIVE))
         ).order_by('-like')
-        return Response(data=PostSerializer(instance=posts, many=True).data, status=status.HTTP_200_OK)
+        return Response(data=PostSerializer(instance=posts, many=True,context={'request':request}).data, status=status.HTTP_200_OK)
 
 
 class NewsView(generics.ListAPIView):
@@ -37,7 +37,7 @@ class NewsView(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         from socials.api.serializers import PostSerializer
         return Response(
-            data=PostSerializer(instance=Post.objects.all().order_by('-created'), many=True).data,
+            data=PostSerializer(instance=Post.objects.all().order_by('-created'), many=True,context={'request':request}).data,
             status=status.HTTP_200_OK
         )
 
@@ -61,7 +61,7 @@ class ActivitiesView(generics.ListAPIView):
             ).values_list('comment__post__id', flat=True).distinct()
         )
         ps = Post.objects.filter(Q(author=request.user) | Q(id__in=post_ids))
-        return Response(data=PostSerializer(instance=ps, many=True).data, status=status.HTTP_200_OK)
+        return Response(data=PostSerializer(instance=ps, many=True, context={'request':request}).data, status=status.HTTP_200_OK)
 
 
 class DashboardView(generics.ListAPIView):
@@ -74,7 +74,7 @@ class DashboardView(generics.ListAPIView):
         return Response(
             data=PostSerializer(instance=Post.objects.filter(
                 Q(author__id__in=f_person_ids) | Q(channel__id__in=f_channel_ids)
-            )
+            ), many=True, context={'request':request}
             ).data,
             status=status.HTTP_200_OK
         )
