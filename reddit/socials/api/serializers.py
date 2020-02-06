@@ -9,6 +9,7 @@ class CommentSerializer(serializers.ModelSerializer):
     create_time = serializers.SerializerMethodField()
     answers = serializers.SerializerMethodField()
     can_reply = serializers.SerializerMethodField()
+    author_avatar = serializers.ImageField(source='author.personal_profile.picture')
 
     class Meta:
         model = Comment
