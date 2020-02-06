@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.CharField(source='author.username')
+    author = serializers.SerializerMethodField()
     create_time = serializers.SerializerMethodField()
     answers = serializers.SerializerMethodField()
     can_reply = serializers.SerializerMethodField()
