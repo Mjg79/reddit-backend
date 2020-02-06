@@ -26,3 +26,8 @@ class IsFollowed(permissions.BasePermission):
             return request.user in obj.channel.followed_by.all()
         else:
             return request.user in obj.author.personal_profile.followed_by.all()
+
+
+class IsAdmin(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.admin == request.user

@@ -3,7 +3,7 @@ from rest_framework.authentication import get_authorization_header
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .permissions import IsAuthor, IsFollowed
+from .permissions import IsAuthor, IsFollowed, IsAdmin
 from rest_framework.request import Request
 from rest_framework.response import Response
 from accounts.api.auth import Authentication
@@ -100,7 +100,6 @@ class PostView(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance=post)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-
     def get_queryset(self):
         id = self.request.query_params.get('post_id', None)
         if id:
@@ -160,6 +159,25 @@ class ChannelView(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         ch = serializer.save()
         return Response(data={'channel_id': ch.id}, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['get'], permission_classes=[IsAdmin])
+    def potential_authors(self, request, pk):
+        from accounts.api.serializers import AuthorSerializer
+        channel = Channel.objects.get(id=pk)
+        return Response(
+            data=AuthorSerializer(instance=channel.followed_by.all(), many=True).data,
+            status=status.HTTP_200_OK
+        )
+
+    def update(self, request, *args, **kwargs):
+        authors = request.data.get('authors', [])
+        try:
+            channel = Channel.objects.get(id=request.data.get('channel', 0))
+            for author in authors:
+                channel.authors.add(author)
+            channel.save()
+        except:
+            raise exceptions.NotAcceptable('plz send channel!')
 
     def get_queryset(self):
         pk = self.request.query_params.get('id', None)
