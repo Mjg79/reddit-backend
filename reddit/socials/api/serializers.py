@@ -77,7 +77,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_author(self, obj: Post):
         from accounts.api.serializers import AuthorSerializer
-        return AuthorSerializer(instance=obj.author).data
+        return AuthorSerializer(instance=obj.author, context=self.context).data
 
     def get_like(self, obj: Post):
         like = Like.objects.filter(feedbacker=self.context['request'].user, post=obj)
@@ -138,7 +138,7 @@ class ChannelSerializer(serializers.ModelSerializer):
 
     def get_authors(self, obj: Channel):
         from accounts.api.serializers import AuthorSerializer
-        return AuthorSerializer(instance=obj.authors, many=True).data
+        return AuthorSerializer(instance=obj.authors, many=True, context=self.context).data
 
     def get_admin(self, obj: Channel):
         from accounts.api.serializers import UserSerializer
@@ -176,7 +176,7 @@ class ChannelDetailSerializer(serializers.ModelSerializer):
 
     def get_authors(self, obj: Channel):
         from accounts.api.serializers import AuthorSerializer
-        return AuthorSerializer(instance=obj.authors, many=True).data
+        return AuthorSerializer(instance=obj.authors, many=True, context=self.context).data
 
     def get_user_admin(self, obj: Channel):
         from accounts.api.serializers import UserSerializer

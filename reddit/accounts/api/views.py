@@ -109,7 +109,7 @@ class FollowView(viewsets.GenericViewSet):
         user = User.objects.get(id=pk)
         return Response(
             data=AuthorSerializer(
-                instance=user.personal_profile.followed_by.all(), many=True, context={'user': user}
+                instance=user.personal_profile.followed_by.all(), many=True, context={'request': request}
             ).data,
             status=status.HTTP_200_OK
         )
@@ -121,7 +121,8 @@ class FollowView(viewsets.GenericViewSet):
         return Response(
             data={
                 'people': AuthorSerializer(
-                    instance=user.followings_user.all().values_list('user', flat=True).distinct(), many=True
+                    instance=user.followings_user.all().values_list('user', flat=True).distinct(), many=True,
+                    context={'request':request}
                 ).data,
                 'channels': ChannelSerializer(instance=user.followings_channel.all(), many=True).data,
             }

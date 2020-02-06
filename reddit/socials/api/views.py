@@ -207,7 +207,7 @@ class ChannelDetailView(viewsets.ModelViewSet):
         from accounts.api.serializers import AuthorSerializer
         channel = Channel.objects.get(id=pk)
         return Response(
-            data=AuthorSerializer(instance=channel.followed_by.all(), many=True).data,
+            data=AuthorSerializer(instance=channel.followed_by.all(), many=True, context={'request':request}).data,
             status=status.HTTP_200_OK
         )
 
