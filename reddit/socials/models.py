@@ -34,7 +34,6 @@ def post_image_path(instance, img):
 class Channel(TimestampedModel, ActivatedModel):
     name = models.CharField(
         max_length=30,
-        unique=True,
     )
     admin = models.ForeignKey(
         to='accounts.User',
