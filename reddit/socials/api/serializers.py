@@ -5,16 +5,22 @@ from django.contrib.contenttypes.models import ContentType
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author_name = serializers.CharField(source='author.username')
+    author = serializers.CharField(source='author.username')
     create_time = serializers.SerializerMethodField()
     answers = serializers.SerializerMethodField()
     can_reply = serializers.SerializerMethodField()
-    author_avatar = serializers.ImageField(source='author.personal_profile.picture')
 
     class Meta:
         model = Comment
-        fields = ['id', 'text', 'author_name', 'create_time', 'answers', 'can_reply']
+        fields = ['id', 'text', 'author', 'create_time', 'answers', 'can_reply']
         read_only_fields = fields
+
+    def get_author(self, obj: Comment):
+        return {
+            'name': obj.author.username,
+            'avatar': obj.author.personal_profile.picture.url if obj.author.personal_profile.picture else '',
+            'id': obj.author.id
+        }
 
     def get_can_reply(self, obj: Comment):
         return True
