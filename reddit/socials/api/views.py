@@ -142,19 +142,23 @@ class PostDetailView(viewsets.ModelViewSet):
         from socials.models import Like, FeedbackChoices
         pk = request.data.get('id', 0)
         l = request.query_params.get('like', 0)
+        print(l)
         if Like.objects.filter(feedbacker=request.user, post__id=pk).exists():
             like = Like.objects.get(feedbacker=request.user, post__id=pk)
-            if l == 0:
+            if l == '0':
+                print('hear1')
                 like.feedback = None
-            elif l == 1:
+            elif l == '1':
+                print('hear2')
                 like.feedback = FeedbackChoices.POSITIVE
             else:
+                print('hear3')
                 like.feedback = FeedbackChoices.NEGATIVE
             like.save()
         else:
-            if l == 0:
+            if l == '0':
                 choice = None
-            elif l == 1:
+            elif l == '1':
                 choice = FeedbackChoices.POSITIVE
             else:
                 choice = FeedbackChoices.NEGATIVE
