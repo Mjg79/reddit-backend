@@ -10,6 +10,13 @@ class IsAuthor(permissions.BasePermission):
         channel = Channel.objects.get(id=channel_id)
         return request.user in channel.authors.all() or request.user == channel.admin
 
+    def has_object_permission(self, request, view, obj):
+        try:
+            chan = obj.channel
+        except:
+            chan = None
+        return (chan != None and request.user == chan.admin) or request.user == obj.author
+
 
 class IsFollowed(permissions.BasePermission):
     def has_permission(self, request, view):

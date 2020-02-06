@@ -85,7 +85,7 @@ class DashboardView(generics.ListAPIView):
 
 
 class PostModelView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAuthor]
 
     def update(self, request, *args, **kwargs):
         from .serializers import PostModelSerializer
