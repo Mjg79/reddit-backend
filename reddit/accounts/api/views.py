@@ -97,6 +97,7 @@ class ProfileView(viewsets.ModelViewSet):
             raise exceptions.NotAcceptable
         user.set_password(p1)
         user.save()
+        return Response(dict(), status.HTTP_200_OK)
 
 
 class FollowView(viewsets.GenericViewSet):
