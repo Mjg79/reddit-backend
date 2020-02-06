@@ -2,21 +2,34 @@ from rest_framework import serializers
 from socials.models import *
 from jalali_date import datetime2jalali
 from django.contrib.contenttypes.models import ContentType
-from versatileimagefield.serializers import VersatileImageFieldSerializer
 
 
 class CommentSerializer(serializers.ModelSerializer):
     author_name = serializers.CharField(source='author.username')
     answering_id = serializers.CharField(source='answering.id')
     create_time = serializers.SerializerMethodField()
+    answers = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
-        fields = ['id', 'text', 'author_name', 'answering_id', 'create_time']
+        fields = ['id', 'text', 'author_name', 'answering_id', 'create_time', 'answers']
         read_only_fields = fields
 
     def get_create_time(self, obj: Comment):
         return datetime2jalali(obj.created).strftime('%Y/%m/%d %H:%M') if obj.created else ''
+
+    def get_anwers(self, obj: Comment):
+        data = []
+        if obj.answers.count():
+            for answer in obj.answers.all():
+                author = answer.author
+                data.append({
+                    'id': answer.id,
+                    'text': answer.text,
+                    'author_name': author.username,
+                    'author_id': author.id,
+                    'author_avatar': author.personal_profile.picture.url if author.personal_profile.picture.url else ''
+                })
 
 
 class PostModelSerializer(serializers.ModelSerializer):

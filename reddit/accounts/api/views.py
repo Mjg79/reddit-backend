@@ -11,7 +11,6 @@ from django.contrib.auth import user_logged_in, user_logged_out
 from accounts.models import User, Profile
 from django.db import transaction
 from .serializers import LoginSerializer, UserSerializer, AuthorSerializer, ProfileSerializer, UploadSerializer
-from socials.api.serializers import ChannelSerializer
 from socials.models import Channel
 
 
@@ -106,6 +105,7 @@ class FollowView(viewsets.GenericViewSet):
 
     @action(detail=True, methods=['get'])
     def followings(self, request, pk):
+        from socials.api.serializers import ChannelSerializer
         user = User.objects.get(id=pk)
         return Response(
             data={

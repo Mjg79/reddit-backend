@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework import routers
-from .views import *
+from .views import UserView, FollowView, ProfileView, LoginView, UserUpdateView, ForgetpasswordView
 
 app_name = 'accounts'
 

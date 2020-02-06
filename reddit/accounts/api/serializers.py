@@ -1,9 +1,7 @@
 from rest_framework import serializers
 from accounts.models import User, Profile
 from django.contrib.auth.validators import ASCIIUsernameValidator
-from socials.api.serializers import ChannelSerializer
 from socials.models import Channel
-from versatileimagefield.serializers import VersatileImageFieldSerializer
 
 
 class LoginSerializer(serializers.Serializer):
@@ -63,6 +61,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         return obj.user.posts.count()
 
     def get_channels(self, obj: Profile):
+        from socials.api.serializers import ChannelSerializer
         chs = Channel.objects.filter(
             id__in=list(obj.user.channels_author.all().values_list('id', flat=True)) + list(obj.user.channels_admin.all().values_list('id', flat=True))
         )

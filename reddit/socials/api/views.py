@@ -91,7 +91,8 @@ class PostModelView(generics.RetrieveUpdateDestroyAPIView):
         from .serializers import PostModelSerializer
         serializer = PostModelSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.update()
+        post = Post.objects.get(id=kwargs['id'])
+        serializer.update(post, serializer.validated_data)
         return Response(serializer.data)
 
     def delete(self, request, *args, **kwargs):
@@ -229,8 +230,17 @@ class NotifView(generics.RetrieveUpdateAPIView):
         return Response(dict(), status.HTTP_200_OK)
 
 
-class CommentView(viewsets.ViewSet):
+class CommentView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        try:
+            pk = self.request.query_params.get('id', None)
+            if pk:
+                return Comment.objects.get(id=pk)
+        except:
+            return Comment.objects.none()
 
     @action(detail=False, methods=['put'], permission_classes=[IsFollowed])
     def feedback(self, request):
