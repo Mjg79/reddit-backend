@@ -19,6 +19,12 @@ class CommentSerializer(serializers.ModelSerializer):
         return datetime2jalali(obj.created).strftime('%Y/%m/%d %H:%M') if obj.created else ''
 
 
+class PostModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = '__all__'
+
+
 class PostSerializer(serializers.ModelSerializer):
     author = serializers.SerializerMethodField()
     channel = serializers.SerializerMethodField()
@@ -26,11 +32,17 @@ class PostSerializer(serializers.ModelSerializer):
     create_time = serializers.SerializerMethodField()
     like = serializers.SerializerMethodField()
     no_feedbacks = serializers.SerializerMethodField()
+    no_comments = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ['id', 'text', 'author', 'channel', 'comments', 'create_time', 'like', 'no_feedbacks', 'image']
+        fields = ['id', 'text', 'author', 'channel', 'comments', 'create_time', 'like',
+                  'no_feedbacks', 'image', 'no_comments'
+                  ]
         read_only_fields = fields
+
+    def get_no_comments(self, obj: Post):
+        return obj.comments.count()
 
     def get_comments(self, obj: Post):
         return CommentSerializer(instance=obj.comments, many=True).data
@@ -112,6 +124,12 @@ class ChannelSerializer(serializers.ModelSerializer):
         return Post.objects.filter(channel=obj).count()
 
 
+class ChannelModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Channel
+        fields = ['name', 'rules', 'admin', 'authors', 'avatar']
+
+
 class ChannelDetailSerializer(serializers.ModelSerializer):
     authors = serializers.SerializerMethodField(required=False)
     user_admin = serializers.SerializerMethodField(required=False)
@@ -119,13 +137,7 @@ class ChannelDetailSerializer(serializers.ModelSerializer):
     no_posts = serializers.SerializerMethodField(required=False)
     posts = serializers.SerializerMethodField(required=False)
     follow = serializers.SerializerMethodField(required=False)
-    avatar = VersatileImageFieldSerializer(
-        sizes=[
-            ('full_size', 'url'),
-            ('thumbnail', 'thumbnail__100x100'),
-            ('medium_square_crop', 'crop__100x100'),
-        ]
-    )
+    avatar = serializers.ImageField('avatar')
 
     class Meta:
         model = Channel

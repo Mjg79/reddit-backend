@@ -107,6 +107,13 @@ class PostView(viewsets.ModelViewSet):
         else:
             raise exceptions.NotFound('return id')
 
+    def update(self, request, *args, **kwargs):
+        from .serializers import PostModelSerializer
+        serializer = PostModelSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
     @action(detail=False, methods=['get'])
     def available_channels(self, request):
         user = request.user
@@ -170,14 +177,11 @@ class ChannelView(viewsets.ModelViewSet):
         )
 
     def update(self, request, *args, **kwargs):
-        authors = request.data.get('authors', [])
-        try:
-            channel = Channel.objects.get(id=request.data.get('channel', 0))
-            for author in authors:
-                channel.authors.add(author)
-            channel.save()
-        except:
-            raise exceptions.NotAcceptable('plz send channel!')
+        from .serializers import ChannelModelSerializer
+        serializer = ChannelModelSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
     def get_queryset(self):
         pk = self.request.query_params.get('id', None)

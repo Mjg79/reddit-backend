@@ -14,13 +14,7 @@ class LoginSerializer(serializers.Serializer):
 
 
 class UploadSerializer(serializers.ModelSerializer):
-    picture = VersatileImageFieldSerializer(
-        sizes=[
-            ('full_size', 'url'),
-            ('thumbnail', 'thumbnail__100x100'),
-            ('medium_square_crop', 'crop__100x100'),
-        ]
-    )
+    picture = serializers.ImageField('personal_profile.picture')
 
     class Meta:
         model = User

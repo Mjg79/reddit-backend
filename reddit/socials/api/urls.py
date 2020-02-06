@@ -11,6 +11,7 @@ router.register('post', PostView, basename='post')
 router.register('channel', ChannelView, basename='channel')
 router.register('comment', CommentView, basename='comment')
 
+
 urlpatterns = router.urls + [
     path('dashboard/', DashboardView.as_view(), name='dashboard'),
     path('notifs/', NotifView.as_view(), name='notifications'),
