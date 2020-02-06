@@ -81,8 +81,10 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_like(self, obj: Post):
         like = Like.objects.filter(feedbacker=self.context['request'].user, post=obj)
-        if like.exists():
-            return 1 if like.filter(feedback=FeedbackChoices.POSITIVE).exists() else -1
+        if like.filter(feedback=FeedbackChoices.POSITIVE).exists():
+            return 1
+        elif like.filter(feedback=FeedbackChoices.NEGATIVE).exists():
+            return -1
         else:
             return 0
 
