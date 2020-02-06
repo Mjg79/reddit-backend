@@ -9,11 +9,15 @@ class CommentSerializer(serializers.ModelSerializer):
     answering_id = serializers.CharField(source='answering.id')
     create_time = serializers.SerializerMethodField()
     answers = serializers.SerializerMethodField()
+    can_reply = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
-        fields = ['id', 'text', 'author_name', 'answering_id', 'create_time', 'answers']
+        fields = ['id', 'text', 'author_name', 'answering_id', 'create_time', 'answers', 'can_reply']
         read_only_fields = fields
+
+    def get_can_reply(self, obj: Comment):
+        return True
 
     def get_create_time(self, obj: Comment):
         return datetime2jalali(obj.created).strftime('%Y/%m/%d %H:%M') if obj.created else ''
@@ -28,7 +32,8 @@ class CommentSerializer(serializers.ModelSerializer):
                     'text': answer.text,
                     'author_name': author.username,
                     'author_id': author.id,
-                    'author_avatar': author.personal_profile.picture.url if author.personal_profile.picture.url else ''
+                    'author_avatar': author.personal_profile.picture.url if author.personal_profile.picture.url else '',
+                    'can_reply': False
                 })
 
 
