@@ -300,9 +300,9 @@ class SearchView(generics.ListAPIView):
             Q(last_name__icontains=q)
         )
         data = {
-            'channels': ChannelSerializer(instance=channels, many=True).data,
-            'users': AuthorSerializer(instance=users, many=True).data,
-            'posts': PostSerilaizerLite(instance=posts, many=True).data
+            'channels': ChannelSerializer(instance=channels, many=True, context={'request': request}).data,
+            'users': AuthorSerializer(instance=users, many=True, context={'request': request}).data,
+            'posts': PostSerilaizerLite(instance=posts, many=True, context={'request': request}).data
         }
         return Response(data=data, status=status.HTTP_200_OK)
 
