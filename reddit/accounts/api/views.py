@@ -157,8 +157,8 @@ class ForgetpPasswordView(generics.RetrieveUpdateAPIView):
     permission_classes = [AllowAny]
 
     def retrieve(self, request, *args, **kwargs):
-        from django.core.mail import EmailMessage
-        username = kwargs.get('username', None)
+        from django.core.mail import send_mail, EmailMessage
+        username = request.query_params.get('username', None)
         if not User.objects.filter(username=username).exists():
             raise exceptions.NotAcceptable('You are NOT registerd')
         user = User.objects.get(username=username)
@@ -168,7 +168,7 @@ class ForgetpPasswordView(generics.RetrieveUpdateAPIView):
         vc = get_verfy_code()
         user.personal_profile.verfy_code = vc
         user.personal_profile.save()
-        mail = EmailMessage('you said that you forgot your password', f'Your verfy code is {vc}', to=[user.email])
+        mail = EmailMessage('verify code', f'Your verfy code is {vc}', [user.email])
         mail.send()
         return Response(data=dict(), status=status.HTTP_200_OK)
 
