@@ -88,19 +88,18 @@ class PostView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsAuthor]
     serializer_class = PostSerializer
 
-    # @action()
-    # def get_channels(self):
-
     def create(self, request, *args, **kwargs):
         text = request.data.get('caption', '')
         channel_id = request.data.get('channel_id', '')
+        image = request.data.get('image', None)
         try:
             channel = Channel.objects.get(id=channel_id)
         except:
             channel = None
-        post = Post.objects.create(text=text, channel=channel, author=request.user)
+        post = Post.objects.create(text=text, channel=channel, image=image, author=request.user)
         serializer = self.get_serializer(instance=post)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
     def get_queryset(self):
         id = self.request.query_params.get('post_id', None)
