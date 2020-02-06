@@ -152,3 +152,10 @@ VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
         ('medium_square_crop', 'crop__100x100'),
     ]
 }
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}

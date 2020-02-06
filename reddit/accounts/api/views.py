@@ -145,20 +145,49 @@ class FollowView(viewsets.GenericViewSet):
         return Response(data=dict(), status=status.HTTP_200_OK)
 
 
-class ForgetpasswordView(generics.CreateAPIView):
+def get_verfy_code():
+    import random
+    s = ''
+    for _ in range(10):
+        s += str(random.randint(1,10))
+    return s
+
+
+class ForgetpPasswordView(generics.RetrieveUpdateAPIView):
     permission_classes = [AllowAny]
 
-    def create(self, request, *args, **kwargs):
+    def retrieve(self, request, *args, **kwargs):
         from django.core.mail import EmailMessage
-
-        email = request.data.get('email', None)
-        if not User.objects.filter(email=email).exists():
+        username = kwargs.get('username', None)
+        if not User.objects.filter(username=username).exists():
             raise exceptions.NotAcceptable('You are NOT registerd')
-        if not email:
+        user = User.objects.get(username=username)
+        if not user.email:
             raise exceptions.NotAcceptable('Dont have any emails')
-        mail = EmailMessage('you said that you forgot your password', 'ascljhsca', to=[email])
 
+        vc = get_verfy_code()
+        user.personal_profile.verfy_code = vc
+        user.personal_profile.save()
+        mail = EmailMessage('you said that you forgot your password', f'Your verfy code is {vc}', to=[user.email])
+        mail.send()
         return Response(data=dict(), status=status.HTTP_200_OK)
+
+    def update(self, request, *args, **kwargs):
+        data = request.data
+        username = data.get('username', '')
+        if not username or not User.objects.filter(username=username).exists() or not data.get('password', ''):
+            raise exceptions.NotFound
+        user = User.objects.get(username=username)
+        if user.personal_profile.verfy_code == data.get('verify_code', 'nn'):
+            user.personal_profile.verfy_code = 'n'
+            user.personal_profile.save()
+            user.set_password(data['password'])
+            return Response({'detail': 'password changed'}, status.HTTP_200_OK)
+        else:
+            raise exceptions.NotAcceptable('verify code is not correct')
+
+
+
 
 
 

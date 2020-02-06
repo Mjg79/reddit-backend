@@ -88,6 +88,7 @@ class Profile(TimestampedModel):
         verbose_name=_('followers'),
         related_name='followings_user',
     )
+    verfy_code = models.CharField(max_length=11, null=True)
 
     class Meta:
         verbose_name = _('profile')
