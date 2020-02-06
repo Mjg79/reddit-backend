@@ -193,7 +193,7 @@ class ChannelDetailView(viewsets.ModelViewSet):
     serializer_class = ChannelDetailSerializer
 
     def create(self, request, *args, **kwargs):
-        data = request.data
+        data = request.data.copy()
         data['admin'] = str(request.user.id)
         if not data.get('authors', None):
             data['authors'] = request.user.id
@@ -215,7 +215,7 @@ class ChannelDetailView(viewsets.ModelViewSet):
         pk = self.request.query_params.get('id', None)
         if pk:
             return Channel.objects.filter(id=pk)
-        return []
+        raise exceptions.NotFound
 
 
 class NotifView(generics.RetrieveUpdateAPIView):
@@ -243,9 +243,9 @@ class CommentView(viewsets.ModelViewSet):
         try:
             pk = self.request.query_params.get('id', None)
             if pk:
-                return Comment.objects.get(id=pk)
+                return Comment.objects.filter(id=pk)
         except:
-            return Comment.objects.none()
+            raise exceptions.NotFound
 
     @action(detail=False, methods=['put'], permission_classes=[IsFollowed])
     def feedback(self, request):
