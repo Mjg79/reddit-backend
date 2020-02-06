@@ -34,6 +34,7 @@ class CommentSerializer(serializers.ModelSerializer):
                     'author_avatar': author.personal_profile.picture.url if author.personal_profile.picture.url else '',
                     'can_reply': False
                 })
+        return data
 
 
 class PostModelSerializer(serializers.ModelSerializer):
