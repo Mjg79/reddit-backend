@@ -214,7 +214,7 @@ class NotificationSerializer(serializers.ModelSerializer):
         data['id'] = obj.audience_id
         return data
 
-    def get_who_name(self, obj: Notification):
+    def get_who(self, obj: Notification):
         return {
             'name': obj.who.username,
             'id': obj.who.id,
