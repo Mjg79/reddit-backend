@@ -168,7 +168,8 @@ class ForgetpPasswordView(generics.RetrieveUpdateAPIView):
         vc = get_verfy_code()
         user.personal_profile.verfy_code = vc
         user.personal_profile.save()
-        mail = EmailMessage('verify code', f'Your verfy code is {vc}', [user.email])
+        mail = EmailMessage('verify code', f'Your verify code is {vc}', [user.email])
+        print(vc)
         mail.send()
         return Response(data=dict(), status=status.HTTP_200_OK)
 
