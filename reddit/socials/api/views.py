@@ -84,7 +84,23 @@ class DashboardView(generics.ListAPIView):
         )
 
 
-class PostView(viewsets.ModelViewSet):
+class PostModelView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def update(self, request, *args, **kwargs):
+        from .serializers import PostModelSerializer
+        serializer = PostModelSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.update()
+        return Response(serializer.data)
+
+    def delete(self, request, *args, **kwargs):
+        post = Post.objects.get(kwargs['id'])
+        post.delete()
+        return Response(dict(), status.HTTP_200_OK)
+
+
+class PostDetailView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsAuthor]
     serializer_class = PostSerializer
 
@@ -106,13 +122,6 @@ class PostView(viewsets.ModelViewSet):
             return Post.objects.filter(id=id)
         else:
             raise exceptions.NotFound('return id')
-
-    def update(self, request, *args, **kwargs):
-        from .serializers import PostModelSerializer
-        serializer = PostModelSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
 
     @action(detail=False, methods=['get'])
     def available_channels(self, request):
