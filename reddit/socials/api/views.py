@@ -96,7 +96,8 @@ class PostModelView(generics.RetrieveUpdateDestroyAPIView):
         return Response(serializer.data)
 
     def delete(self, request, *args, **kwargs):
-        post = Post.objects.get(kwargs['id'])
+        print(kwargs)
+        post = Post.objects.get(id=kwargs['id'])
         post.delete()
         return Response(dict(), status.HTTP_200_OK)
 
