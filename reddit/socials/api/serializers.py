@@ -21,7 +21,7 @@ class CommentSerializer(serializers.ModelSerializer):
     def get_create_time(self, obj: Comment):
         return datetime2jalali(obj.created).strftime('%Y/%m/%d %H:%M') if obj.created else ''
 
-    def get_anwers(self, obj: Comment):
+    def get_answers(self, obj: Comment):
         data = []
         if obj.answers.count():
             for answer in obj.answers.all():
