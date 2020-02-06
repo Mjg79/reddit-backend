@@ -193,7 +193,11 @@ class ChanneDetaillView(viewsets.ModelViewSet):
     serializer_class = ChannelDetailSerializer
 
     def create(self, request, *args, **kwargs):
-        serializer = ChannelModelSerializer(data=request.data)
+        data = request.data
+        data['admin'] = request.user.id
+        if data.get('authors', None):
+            data['authors'] = request.user.id
+        serializer = ChannelModelSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         ch = serializer.save()
         return Response(data={'channel_id': ch.id}, status=status.HTTP_201_CREATED)
