@@ -118,11 +118,13 @@ class FollowView(viewsets.GenericViewSet):
 
     @action(detail=True, methods=['put'])
     def user(self, request, pk):
+        from socials.models import Notification, NotifSituations
         action = request.query_params.get('action', '')
         profile = Profile.objects.get(user__id=pk)
         if action == 'unfollow':
             profile.followed_by.remove(request.user)
         else:
+            Notification.objects.create(situation=NotifSituations.FOLLOWED, for_user=profile.user, who=request.user)
             profile.followed_by.add(request.user)
         profile.save()
         return Response(data=dict(), status=status.HTTP_200_OK)
