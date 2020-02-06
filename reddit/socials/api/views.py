@@ -89,7 +89,7 @@ class PostView(viewsets.ModelViewSet):
     serializer_class = PostSerializer
 
     def create(self, request, *args, **kwargs):
-        text = request.data.get('caption', '')
+        text = request.data.get('text', '')
         channel_id = request.data.get('channel_id', '')
         image = request.data.get('image', None)
         try:

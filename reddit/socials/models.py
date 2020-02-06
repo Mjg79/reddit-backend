@@ -5,6 +5,7 @@ from djchoices import DjangoChoices, ChoiceItem
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from versatileimagefield.fields import VersatileImageField
+from django.utils import timezone
 
 
 __all__=[
@@ -18,12 +19,16 @@ __all__=[
 ]
 
 
-def channel_avatar_path(instance):
-    return os.path.join(instance.name)
+def channel_avatar_path(instance, img):
+    time = timezone.now()
+    path = f'channel/{instance.name}/{time.year}/{time.month}/{img}'
+    return path
 
 
-def post_image_path(instance):
-    return os.path.join(instance.author.username + 'Post' + instance.author.posts.count())
+def post_image_path(instance, img):
+    time = timezone.now()
+    path = f'post/{instance.id}/{time.year}/{time.month}/{img}'
+    return path
 
 
 class Channel(TimestampedModel, ActivatedModel):
