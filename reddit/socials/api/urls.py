@@ -8,7 +8,7 @@ router = routers.DefaultRouter()
 router.include_root_view = False
 
 router.register('post', PostDetailView, basename='post')
-router.register('channel', ChanneDetaillView, basename='channel')
+router.register('channel', ChannelDetailView, basename='channel')
 router.register('comment', CommentView, basename='comment')
 
 

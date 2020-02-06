@@ -188,14 +188,14 @@ class ChannelView(generics.RetrieveUpdateDestroyAPIView):
         return Response({'detail': 'deleted'}, status.HTTP_200_OK)
 
 
-class ChanneDetaillView(viewsets.ModelViewSet):
+class ChannelDetailView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = ChannelDetailSerializer
 
     def create(self, request, *args, **kwargs):
         data = request.data
-        data['admin'] = request.user.id
-        if data.get('authors', None):
+        data['admin'] = str(request.user.id)
+        if not data.get('authors', None):
             data['authors'] = request.user.id
         serializer = ChannelModelSerializer(data=data)
         serializer.is_valid(raise_exception=True)
