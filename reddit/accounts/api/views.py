@@ -88,6 +88,16 @@ class ProfileView(viewsets.ModelViewSet):
     def get_queryset(self):
         return Profile.objects.filter(user__id=self.request.query_params.get('id', 0))
 
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        data = request.data
+        p1 = data.get('password1', '')
+        p2 = data.get('password2', '')
+        if not p1 or not p2 or p1 != p2:
+            raise exceptions.NotAcceptable
+        user.set_password(p1)
+        user.save()
+
 
 class FollowView(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
@@ -183,6 +193,7 @@ class ForgetpPasswordView(generics.RetrieveUpdateAPIView):
             user.personal_profile.verfy_code = 'n'
             user.personal_profile.save()
             user.set_password(data['password'])
+            user.save()
             return Response({'detail': 'password changed'}, status.HTTP_200_OK)
         else:
             raise exceptions.NotAcceptable('verify code is not correct')
