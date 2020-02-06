@@ -157,12 +157,32 @@ class PostView(viewsets.ModelViewSet):
         return Response(data={'id': comment.id}, status=status.HTTP_201_CREATED)
 
 
-class ChannelView(viewsets.ModelViewSet):
+class ChannelView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAdmin]
+    serializer_class = ChannelModelSerializer
+
+    def update(self, request, *args, **kwargs):
+        channel = Channel.objects.get(id=kwargs['id'])
+        data = request.data
+        if not data.get('authors', None):
+            data['authors'] = str(channel.admin_id)
+        ser = ChannelModelSerializer(data=request.data)
+        ser.is_valid(raise_exception=True)
+        ser.update(channel, ser.validated_data)
+        return Response(ser.data, status.HTTP_200_OK)
+
+    def delete(self, request, *args, **kwargs):
+        channel = Channel.objects.get(id=kwargs['id'])
+        channel.delete()
+        return Response({'detail': 'deleted'}, status.HTTP_200_OK)
+
+
+class ChanneDetaillView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = ChannelDetailSerializer
 
     def create(self, request, *args, **kwargs):
-        serializer = ChannelDetailSerializer(data=request.data)
+        serializer = ChannelModelSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         ch = serializer.save()
         return Response(data={'channel_id': ch.id}, status=status.HTTP_201_CREATED)
@@ -175,13 +195,6 @@ class ChannelView(viewsets.ModelViewSet):
             data=AuthorSerializer(instance=channel.followed_by.all(), many=True).data,
             status=status.HTTP_200_OK
         )
-
-    def update(self, request, *args, **kwargs):
-        from .serializers import ChannelModelSerializer
-        serializer = ChannelModelSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
 
     def get_queryset(self):
         pk = self.request.query_params.get('id', None)

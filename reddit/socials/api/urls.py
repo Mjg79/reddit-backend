@@ -8,7 +8,7 @@ router = routers.DefaultRouter()
 router.include_root_view = False
 
 router.register('post', PostView, basename='post')
-router.register('channel', ChannelView, basename='channel')
+router.register('channel', ChanneDetaillView, basename='channel')
 router.register('comment', CommentView, basename='comment')
 
 
@@ -18,5 +18,6 @@ urlpatterns = router.urls + [
     path('news/', NewsView.as_view(), name='news'),
     path('activities/',  ActivitiesView.as_view(), name='activities'),
     path('hots/', HotsView.as_view(), name='hots'),
-    path('search/', SearchView.as_view(), name='search')
+    path('search/', SearchView.as_view(), name='search'),
+    path('channel_change/<int:id>/', ChannelView.as_view(), name='channel_info')
 ]

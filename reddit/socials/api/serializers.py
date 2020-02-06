@@ -127,7 +127,7 @@ class ChannelSerializer(serializers.ModelSerializer):
 class ChannelModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Channel
-        fields = ['name', 'rules', 'admin', 'authors', 'avatar']
+        fields = ['id', 'name', 'rules', 'authors', 'avatar']
 
 
 class ChannelDetailSerializer(serializers.ModelSerializer):
