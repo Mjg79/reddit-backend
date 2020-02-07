@@ -21,7 +21,6 @@ from django.db.models import *
 class HotsView(generics.ListAPIView):
     queryset = Post.objects.none()
     permission_classes = [IsAuthenticated]
-    authentication_classes = [Authentication]
 
     def get(self, request, *args, **kwargs):
         from socials.api.serializers import PostSerializer
@@ -34,7 +33,6 @@ class HotsView(generics.ListAPIView):
 class NewsView(generics.ListAPIView):
     queryset = Post.objects.none()
     permission_classes = [IsAuthenticated]
-    authentication_classes = [Authentication]
 
     def get(self, request, *args, **kwargs):
         from socials.api.serializers import PostSerializer
@@ -47,7 +45,6 @@ class NewsView(generics.ListAPIView):
 class ActivitiesView(generics.ListAPIView):
     queryset = Post.objects.none()
     permission_classes = [IsAuthenticated]
-    authentication_classes = [Authentication]
 
     def get(self, request, *args, **kwargs):
         post_ids = list(Comment.objects.filter(
@@ -70,7 +67,6 @@ class ActivitiesView(generics.ListAPIView):
 class DashboardView(generics.ListAPIView):
     queryset = Post.objects.none()
     permission_classes = [IsAuthenticated]
-    authentication_classes = [Authentication]
 
     def get(self, request, *args, **kwargs):
         f_person_ids = request.user.followings_user.all().values_list('id', flat=True).distinct()
