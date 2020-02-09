@@ -31,6 +31,12 @@ def post_image_path(instance, img):
     return path
 
 
+def comment_image_path(instance, img):
+    time = timezone.now()
+    path = f'comment/{instance.id}/{time.year}/{time.month}/{img}'
+    return path
+
+
 class Channel(TimestampedModel, ActivatedModel):
     name = models.CharField(
         max_length=30,
@@ -102,6 +108,12 @@ class Comment(TimestampedModel, ActivatedModel):
         on_delete=models.CASCADE,
         related_name='answers',
         null=True
+    )
+    image = VersatileImageField(
+        verbose_name='image',
+        blank=True,
+        upload_to=comment_image_path,
+        max_length=255,
     )
 
 

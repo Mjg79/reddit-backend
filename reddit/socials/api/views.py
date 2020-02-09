@@ -160,7 +160,9 @@ class PostDetailView(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'], permission_classes=[IsFollowed])
     def comment(self, request):
         post = Post.objects.get(id=request.data.get('id', 0))
-        comment = Comment.objects.create(author=request.user, post=post, text=request.data.get('text', ''))
+        comment = Comment.objects.create(
+            author=request.user, post=post, text=request.data.get('text', ''), image=request.data.get('image' ,None)
+        )
         return Response(data={'id': comment.id}, status=status.HTTP_201_CREATED)
 
 
@@ -269,7 +271,10 @@ class CommentView(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'], permission_classes=[IsFollowed])
     def comment(self, request):
         comment = Comment.objects.get(id=request.data.get('id', ''))
-        c = Comment.objects.create(author=request.user, answering=comment, text=request.data.get('text', ''))
+        c = Comment.objects.create(
+            author=request.user, answering=comment,
+            text=request.data.get('text', ''), image=request.data.get('image', None)
+        )
         return Response(data={'id': c.id}, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated])

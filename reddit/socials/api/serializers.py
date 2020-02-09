@@ -11,11 +11,15 @@ class CommentSerializer(serializers.ModelSerializer):
     can_reply = serializers.SerializerMethodField()
     no_feedbacks = serializers.SerializerMethodField()
     like = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
-        fields = ['id', 'text', 'author', 'create_time', 'answers', 'can_reply', 'no_feedbacks', 'like']
+        fields = ['id', 'text', 'author', 'create_time', 'answers', 'can_reply', 'no_feedbacks', 'like', 'image']
         read_only_fields = fields
+
+    def get_image(self, obj: Comment):
+        return obj.image.url if obj.image else ''
 
     def get_no_feedbacks(self, obj: Comment):
         return {
