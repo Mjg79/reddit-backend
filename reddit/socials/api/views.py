@@ -246,20 +246,20 @@ class CommentView(viewsets.ModelViewSet):
     @action(detail=False, methods=['put'], permission_classes=[IsFollowed])
     def feedback(self, request):
         pk = request.data.get('id', 0)
-        l = request.query_params.get('like', 0)
+        l = request.query_params.get('like', '0')
         if Like.objects.filter(feedbacker=request.user, comment_id=pk).exists():
             like = Like.objects.get(feedbacker=request.user, comment_id=pk)
-            if l == 0:
+            if l == '0':
                 like.feedback = None
-            elif l == 1:
+            elif l == '1':
                 like.feedback = FeedbackChoices.POSITIVE
             else:
                 like.feedback = FeedbackChoices.NEGATIVE
             like.save()
         else:
-            if l == 0:
+            if l == '0':
                 choice = None
-            elif l == 1:
+            elif l == '1':
                 choice = FeedbackChoices.POSITIVE
             else:
                 choice = FeedbackChoices.NEGATIVE
@@ -276,7 +276,7 @@ class CommentView(viewsets.ModelViewSet):
     def answers(self, request, pk):
         comment = Comment.objects.get(id=pk)
         return Response(
-            data=CommentSerializer(instance=comment.answers.all(), many=True).data,
+            data=CommentSerializer(instance=comment.answers.all(), many=True, context={'request':request}).data,
             status=status.HTTP_200_OK
         )
 

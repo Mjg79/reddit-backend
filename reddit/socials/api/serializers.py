@@ -10,10 +10,11 @@ class CommentSerializer(serializers.ModelSerializer):
     answers = serializers.SerializerMethodField()
     can_reply = serializers.SerializerMethodField()
     no_feedbacks = serializers.SerializerMethodField()
+    like = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
-        fields = ['id', 'text', 'author', 'create_time', 'answers', 'can_reply', 'no_feedbacks']
+        fields = ['id', 'text', 'author', 'create_time', 'answers', 'can_reply', 'no_feedbacks', 'like']
         read_only_fields = fields
 
     def get_no_feedbacks(self, obj: Comment):
@@ -21,6 +22,14 @@ class CommentSerializer(serializers.ModelSerializer):
             'likes': obj.likes.filter(feedback=FeedbackChoices.POSITIVE).count(),
             'dislikes': obj.likes.filter(feedback=FeedbackChoices.NEGATIVE).count()
         }
+
+    def get_like(self, obj:Comment):
+        if not obj.likes.filter(feedbacker=self.context['request'].user).exists():
+            return 0
+        elif obj.likes.filter(feedbacker=self.context['request'].user, feedback=FeedbackChoices.POSITIVE).exists():
+            return 1
+        else:
+            return -1
 
     def get_author(self, obj: Comment):
         return {
@@ -77,7 +86,7 @@ class PostSerializer(serializers.ModelSerializer):
         return obj.comments.count()
 
     def get_comments(self, obj: Post):
-        return CommentSerializer(instance=obj.comments, many=True).data
+        return CommentSerializer(instance=obj.comments, many=True, context=self.context).data
 
     def get_create_time(self, obj: Post):
         return datetime2jalali(obj.created).strftime('%Y/%m/%d %H:%M') if obj.created else ''
