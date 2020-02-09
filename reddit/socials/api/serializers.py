@@ -23,7 +23,7 @@ class CommentSerializer(serializers.ModelSerializer):
             'dislikes': obj.likes.filter(feedback=FeedbackChoices.NEGATIVE).count()
         }
 
-    def get_like(self, obj:Comment):
+    def get_like(self, obj: Comment):
         if not obj.likes.filter(feedbacker=self.context['request'].user).exists():
             return 0
         elif obj.likes.filter(feedbacker=self.context['request'].user, feedback=FeedbackChoices.POSITIVE).exists():
@@ -52,9 +52,11 @@ class CommentSerializer(serializers.ModelSerializer):
                 data.append({
                     'id': answer.id,
                     'text': answer.text,
-                    'author_name': author.username,
-                    'author_id': author.id,
-                    'author_avatar': author.personal_profile.picture.url if author.personal_profile.picture.url else '',
+                    'author': {
+                        'name': author.username,
+                        'id': author.id,
+                        'avatar': author.personal_profile.picture.url if author.personal_profile.picture.url else ''
+                    },
                     'can_reply': False
                 })
         return data
