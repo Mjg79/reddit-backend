@@ -27,7 +27,7 @@ class HotsView(generics.ListAPIView):
         posts = Post.objects.filter(created__gte=timezone.now() - timedelta(days=7)).annotate(
             like=Count('likes', filter=Q(likes__feedback=FeedbackChoices.POSITIVE))
         ).order_by('-like')
-        return Response(data=PostSerializer(instance=posts, many=True,context={'request':request}).data, status=status.HTTP_200_OK)
+        return Response(data=PostSerializer(instance=posts, many=True, context={'request': request}).data, status=status.HTTP_200_OK)
 
 
 class NewsView(generics.ListAPIView):

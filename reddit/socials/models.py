@@ -95,6 +95,7 @@ class Comment(TimestampedModel, ActivatedModel):
         to=Post,
         on_delete=models.CASCADE,
         related_name='comments',
+        null=True
     )
     answering = models.ForeignKey(
         to='self',

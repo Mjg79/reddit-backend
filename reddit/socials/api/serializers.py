@@ -95,7 +95,7 @@ class PostSerializer(serializers.ModelSerializer):
         }
 
     def get_channel(self, obj: Post):
-        return ChannelSerializer(instance=obj.channel).data if obj.channel else {}
+        return ChannelSerializer(instance=obj.channel, context=self.context).data if obj.channel else {}
 
 
 class PostSerilaizerLite(serializers.ModelSerializer):

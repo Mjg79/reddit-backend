@@ -165,7 +165,7 @@ def get_verfy_code():
     return s
 
 
-class ForgetpPasswordView(generics.RetrieveUpdateAPIView):
+class ForgetPasswordView(generics.RetrieveUpdateAPIView):
     permission_classes = [AllowAny]
 
     def retrieve(self, request, *args, **kwargs):
