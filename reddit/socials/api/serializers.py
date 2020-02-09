@@ -9,11 +9,18 @@ class CommentSerializer(serializers.ModelSerializer):
     create_time = serializers.SerializerMethodField()
     answers = serializers.SerializerMethodField()
     can_reply = serializers.SerializerMethodField()
+    no_feedbacks = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
-        fields = ['id', 'text', 'author', 'create_time', 'answers', 'can_reply']
+        fields = ['id', 'text', 'author', 'create_time', 'answers', 'can_reply', 'no_feedbacks']
         read_only_fields = fields
+
+    def get_no_feedbacks(self, obj: Comment):
+        return {
+            'likes': obj.likes.filter(feedback=FeedbackChoices.POSITIVE).count(),
+            'dislikes': obj.likes.filter(feedback=FeedbackChoices.NEGATIVE).count()
+        }
 
     def get_author(self, obj: Comment):
         return {
