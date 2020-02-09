@@ -63,9 +63,10 @@ class ProfileSerializer(serializers.ModelSerializer):
     def get_channels(self, obj: Profile):
         from socials.api.serializers import ChannelSerializer
         chs = Channel.objects.filter(
-            id__in=list(obj.user.channels_author.all().values_list('id', flat=True)) + list(obj.user.channels_admin.all().values_list('id', flat=True))
+            id__in=list(obj.user.channels_author.all().values_list('id', flat=True)) + \
+                   list(obj.user.channels_admin.all().values_list('id', flat=True))
         )
-        return ChannelSerializer(instance=chs, many=True).data
+        return ChannelSerializer(instance=chs, many=True, context=self.context).data
 
     def get_follow(self, obj: Profile):
         user = self.context['request'].user
