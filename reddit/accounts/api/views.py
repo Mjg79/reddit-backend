@@ -40,9 +40,6 @@ class UserUpdateView(generics.UpdateAPIView):
 
     def put(self, request, *args, **kwargs):
         user = request.user
-        # serializer = UploadSerializer(data=request.data)
-        # serializer.is_valid(raise_exception=True)
-        # data = serializer.validated_data
         data = request.data
         if not data.get('email', None):
             raise exceptions.NotAcceptable('please enter an email')
@@ -101,6 +98,15 @@ class ProfileView(viewsets.ModelViewSet):
         user.save()
         return Response(dict(), status.HTTP_200_OK)
 
+    @action(methods=['put'], detail=False)
+    def remove_follower(self, request):
+        try:
+            profile = request.user.personal_profile
+            follower = User.objects.get(id=request.data.get('id', ''))
+            profile.followed_by.remove(follower)
+            profile.save()
+        except:
+            raise exceptions.NotFound
 
 class FollowView(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
