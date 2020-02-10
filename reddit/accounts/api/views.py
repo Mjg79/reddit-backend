@@ -104,6 +104,7 @@ class ProfileView(viewsets.ModelViewSet):
         follower = User.objects.get(id=request.data.get('id', ''))
         profile.followed_by.remove(follower)
         profile.save()
+        Response({'detail':'removed'}, status.HTTP_200_OK)
         # except:
         #     raise exceptions.NotFound
 
