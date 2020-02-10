@@ -86,7 +86,7 @@ class ProfileView(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
 
     def get_queryset(self):
-        return Profile.objects.filter(user__id=self.request.query_params.get('id', 0))
+        return Profile.objects.filter(user_id=self.request.query_params.get('id', 0))
 
     def create(self, request, *args, **kwargs):
         user = request.user

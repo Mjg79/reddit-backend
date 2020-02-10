@@ -4,6 +4,50 @@ from jalali_date import datetime2jalali
 from django.contrib.contenttypes.models import ContentType
 
 
+class AnswerSerializer(serializers.ModelSerializer):
+    author = serializers.SerializerMethodField()
+    create_time = serializers.SerializerMethodField()
+    can_reply = serializers.SerializerMethodField()
+    no_feedbacks = serializers.SerializerMethodField()
+    like = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'text', 'author', 'create_time', 'can_reply', 'no_feedbacks', 'like', 'image']
+        read_only_fields = fields
+
+    def get_image(self, obj: Comment):
+        return obj.image.url if obj.image else ''
+
+    def get_no_feedbacks(self, obj: Comment):
+        return {
+            'likes': obj.likes.filter(feedback=FeedbackChoices.POSITIVE).count(),
+            'dislikes': obj.likes.filter(feedback=FeedbackChoices.NEGATIVE).count()
+        }
+
+    def get_like(self, obj: Comment):
+        if not obj.likes.filter(feedbacker=self.context['request'].user).exists():
+            return 0
+        elif obj.likes.filter(feedbacker=self.context['request'].user, feedback=FeedbackChoices.POSITIVE).exists():
+            return 1
+        else:
+            return -1
+
+    def get_author(self, obj: Comment):
+        return {
+            'name': obj.author.username,
+            'avatar': obj.author.personal_profile.picture.url if obj.author.personal_profile.picture else '',
+            'id': obj.author.id
+        }
+
+    def get_can_reply(self, obj: Comment):
+        return False
+
+    def get_create_time(self, obj: Comment):
+        return datetime2jalali(obj.created).strftime('%Y/%m/%d %H:%M') if obj.created else ''
+
+
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SerializerMethodField()
     create_time = serializers.SerializerMethodField()
@@ -51,18 +95,7 @@ class CommentSerializer(serializers.ModelSerializer):
     def get_answers(self, obj: Comment):
         data = []
         if obj.answers.count():
-            for answer in obj.answers.all():
-                author = answer.author
-                data.append({
-                    'id': answer.id,
-                    'text': answer.text,
-                    'author': {
-                        'name': author.username,
-                        'id': author.id,
-                        'avatar': author.personal_profile.picture.url if author.personal_profile.picture.url else ''
-                    },
-                    'can_reply': False
-                })
+            return AnswerSerializer(instance=obj.answers.all(), many=True, context=self.context).data
         return data
 
 
