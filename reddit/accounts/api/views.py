@@ -100,13 +100,12 @@ class ProfileView(viewsets.ModelViewSet):
 
     @action(methods=['put'], detail=False)
     def remove_follower(self, request):
-        try:
-            profile = request.user.personal_profile
-            follower = User.objects.get(id=request.data.get('id', ''))
-            profile.followed_by.remove(follower)
-            profile.save()
-        except:
-            raise exceptions.NotFound
+        profile = request.user.personal_profile
+        follower = User.objects.get(id=request.data.get('id', ''))
+        profile.followed_by.remove(follower)
+        profile.save()
+        # except:
+        #     raise exceptions.NotFound
 
 class FollowView(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
