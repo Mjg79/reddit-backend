@@ -107,9 +107,10 @@ class FollowView(viewsets.GenericViewSet):
     @action(detail=True, methods=['get'])
     def followers(self, request, pk):
         user = User.objects.get(id=pk)
+        user_ids = user.personal_profile.followed_by.values_list('id', flat=True).distinct()
         return Response(
             data=AuthorSerializer(
-                instance=user.personal_profile.followed_by.all(), many=True, context={'request': request}
+                instance=User.objects.filter(id__in=user_ids), many=True, context={'request': request}
             ).data,
             status=status.HTTP_200_OK
         )
@@ -118,10 +119,11 @@ class FollowView(viewsets.GenericViewSet):
     def followings(self, request, pk):
         from socials.api.serializers import ChannelSerializer
         user = User.objects.get(id=pk)
+        user_ids = user.followings_user.all().values_list('user_id', flat=True).distinct()
         return Response(
             data={
                 'people': AuthorSerializer(
-                    instance=user.followings_user.all().values_list('user', flat=True).distinct(), many=True,
+                    instance=User.objects.filter(id__in=user_ids), many=True,
                     context={'request': request}
                 ).data,
                 'channels': ChannelSerializer(instance=user.followings_channel.all(), many=True).data,
