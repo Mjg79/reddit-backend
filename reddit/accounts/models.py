@@ -82,7 +82,6 @@ class Profile(TimestampedModel):
         upload_to=personal_profile_path,
         max_length=255,
     )
-
     followed_by = models.ManyToManyField(
         to=User,
         verbose_name=_('followers'),

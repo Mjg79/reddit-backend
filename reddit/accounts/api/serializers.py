@@ -88,7 +88,10 @@ class AuthorSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_follow(self, obj: User):
-        user = self.context['request'].user
-        if not user:
+        try:
+            user = self.context['request'].user
+            if not user:
+                return False
+            return user in obj.personal_profile.followed_by.all()
+        except:
             return False
-        return user in obj.personal_profile.followed_by.all()
