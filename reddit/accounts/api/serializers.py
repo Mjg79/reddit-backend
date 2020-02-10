@@ -47,7 +47,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = [
             'user', 'username', 'birth_date', 'no_followings', 'no_followers',
-            'no_posts', 'channels', 'bio', 'picture', 'follow'
+            'no_posts', 'channels', 'bio', 'picture', 'follow', 'bio'
         ]
 
     def get_no_followers(self, obj: Profile):
